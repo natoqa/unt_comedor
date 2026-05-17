@@ -1,0 +1,108 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ═══════════════════════════════════════════
+// Esquema básico - Se expandirá en la Fase 2
+// ═══════════════════════════════════════════
+
+enum Role {
+  ADMIN
+  STUDENT
+}
+
+enum MealShift {
+  BREAKFAST
+  LUNCH
+  DINNER
+}
+
+model User {
+  id            String   @id @default(uuid())
+  universityId  String   @unique @map("university_id")
+  name          String
+  email         String   @unique
+  password      String
+  role          Role     @default(STUDENT)
+  isActive      Boolean  @default(true) @map("is_active")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  ratings       Rating[]
+
+  @@map("users")
+}
+
+model Menu {
+  id          String    @id @default(uuid())
+  date        DateTime  @db.Date
+  shift       MealShift
+  startTime   String    @map("start_time")
+  endTime     String    @map("end_time")
+  description String?
+  calories    Int?
+  proteins    Float?
+  carbs       Float?
+  fats        Float?
+  iron        Float?
+  isActive    Boolean   @default(true) @map("is_active")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  dishes      Dish[]
+  images      MenuImage[]
+  ratings     Rating[]
+
+  @@unique([date, shift])
+  @@map("menus")
+}
+
+model Dish {
+  id        String   @id @default(uuid())
+  menuId    String   @map("menu_id")
+  name      String
+  category  String?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  menu      Menu     @relation(fields: [menuId], references: [id], onDelete: Cascade)
+
+  @@map("dishes")
+}
+
+model MenuImage {
+  id        String    @id @default(uuid())
+  menuId    String    @map("menu_id")
+  shift     MealShift
+  url       String
+  publicId  String    @map("public_id")
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  menu      Menu      @relation(fields: [menuId], references: [id], onDelete: Cascade)
+
+  @@unique([menuId, shift])
+  @@map("menu_images")
+}
+
+model Rating {
+  id         String   @id @default(uuid())
+  menuId     String   @map("menu_id")
+  userId     String   @map("user_id")
+  taste      Int      @db.SmallInt
+  quantity   Int      @db.SmallInt
+  variety    Int      @db.SmallInt
+  hygiene    Int      @db.SmallInt
+  service    Int      @db.SmallInt
+  comment    String?
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  menu       Menu     @relation(fields: [menuId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([menuId, userId])
+  @@map("ratings")
+}
