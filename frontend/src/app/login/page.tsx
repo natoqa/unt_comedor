@@ -11,6 +11,8 @@ import { useAuth } from '@/hooks/useAuth';
 import { ThemeToggle } from '@/components/shared/ThemeToggle';
 import { Eye, EyeOff, User, Lock } from 'lucide-react';
 
+export const dynamic = 'force-static';
+
 const loginSchema = z.object({
   universityId: z.string().min(1, 'El código universitario es obligatorio'),
   password: z.string().min(6, 'La contraseña debe tener al menos 6 caracteres'),

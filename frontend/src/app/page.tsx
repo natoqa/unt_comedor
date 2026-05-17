@@ -4,6 +4,8 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { ThemeToggle } from '@/components/shared/ThemeToggle';
 
+export const dynamic = 'force-static';
+
 const features = [
   { icon: '📋', title: 'Menú diario', desc: 'Consulta desayuno, almuerzo y cena cada día.' },
   { icon: '🥗', title: 'Info nutricional', desc: 'Calorías, proteínas, carbohidratos y más.' },
