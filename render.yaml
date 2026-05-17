@@ -3,7 +3,7 @@ services:
     name: unt-comedor-api
     runtime: node
     region: oregon
-    buildCommand: cd backend && chmod +x render-build.sh && ./render-build.sh
+    buildCommand: cd backend && npm install --include=dev && npx prisma generate && npx prisma migrate deploy && npm run build
     startCommand: cd backend && npm start
     envVars:
       - key: NODE_ENV

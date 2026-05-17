@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { MealShift } from '@prisma/client';
 import { MenuService } from '../services';
-import { sendSuccess, sendPaginated } from '../utils';
+import { sendSuccess, sendPaginated, routeParam } from '../utils';
 import { ValidationError } from '../utils/errors';
 
 const MEAL_SHIFTS: MealShift[] = ['BREAKFAST', 'LUNCH', 'DINNER'];
@@ -22,7 +22,7 @@ export class MenuController {
 
   async getById(req: Request, res: Response, next: NextFunction) {
     try {
-      const menu = await menuService.getById(req.params.id);
+      const menu = await menuService.getById(routeParam(req.params.id, 'id'));
       sendSuccess(res, menu, 'Menú obtenido exitosamente');
     } catch (error) {
       next(error);
@@ -49,7 +49,7 @@ export class MenuController {
 
   async update(req: Request, res: Response, next: NextFunction) {
     try {
-      const menu = await menuService.update(req.params.id, req.body);
+      const menu = await menuService.update(routeParam(req.params.id, 'id'), req.body);
       sendSuccess(res, menu, 'Menú actualizado exitosamente');
     } catch (error) {
       next(error);
@@ -58,7 +58,7 @@ export class MenuController {
 
   async delete(req: Request, res: Response, next: NextFunction) {
     try {
-      await menuService.delete(req.params.id);
+      await menuService.delete(routeParam(req.params.id, 'id'));
       sendSuccess(res, null, 'Menú eliminado exitosamente');
     } catch (error) {
       next(error);
@@ -81,7 +81,10 @@ export class MenuController {
         throw new ValidationError('No se proporcionaron imágenes');
       }
 
-      const images = await menuService.uploadImages(req.params.id, filesByShift);
+      const images = await menuService.uploadImages(
+        routeParam(req.params.id, 'id'),
+        filesByShift
+      );
       sendSuccess(res, images, 'Imágenes subidas exitosamente', 201);
     } catch (error) {
       next(error);
@@ -90,7 +93,10 @@ export class MenuController {
 
   async deleteImage(req: Request, res: Response, next: NextFunction) {
     try {
-      await menuService.deleteImage(req.params.id, req.params.imageId);
+      await menuService.deleteImage(
+        routeParam(req.params.id, 'id'),
+        routeParam(req.params.imageId, 'imageId')
+      );
       sendSuccess(res, null, 'Imagen eliminada exitosamente');
     } catch (error) {
       next(error);

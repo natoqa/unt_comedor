@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import ExcelJS from 'exceljs';
 import { RatingService } from '../services';
-import { sendSuccess } from '../utils';
+import { sendSuccess, routeParam } from '../utils';
 import { AuthRequest } from '../types';
 
 const ratingService = new RatingService();
@@ -50,7 +50,9 @@ export class RatingController {
 
   async getMenuStats(req: Request, res: Response, next: NextFunction) {
     try {
-      const stats = await ratingService.getMenuStats(req.params.menuId);
+      const stats = await ratingService.getMenuStats(
+        routeParam(req.params.menuId, 'menuId')
+      );
       sendSuccess(res, stats, 'Estadísticas del menú obtenidas exitosamente');
     } catch (error) {
       next(error);
@@ -81,7 +83,7 @@ export class RatingController {
     try {
       const authReq = req as AuthRequest;
       const result = await ratingService.checkUserRating(
-        req.params.menuId,
+        routeParam(req.params.menuId, 'menuId'),
         authReq.user!.userId
       );
       sendSuccess(res, result, 'Estado de valoración obtenido');
