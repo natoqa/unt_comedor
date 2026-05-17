@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation';
 import type { Menu, MealShift } from '@/types';
 import { SHIFT_LABELS } from '@/types';
 import { formatMenuDateShort } from '@/lib/date';
+import { resolveMenuImageUrl } from '@/lib/imageUrl';
 import { Pencil, Trash2, Calendar as CalendarIcon, Utensils, Star, Flame, Search, Filter } from 'lucide-react';
 
 const MEAL_SHIFTS: MealShift[] = ['BREAKFAST', 'LUNCH', 'DINNER'];
@@ -60,7 +61,9 @@ const sectionFromMenu = (menu: Menu): ShiftSectionData => ({
   iron: menu.iron?.toString() || '',
   dishes: menu.dishes.map((d) => ({ name: d.name, category: d.category || '' })),
   image: null,
-  imagePreview: menu.images.find((img) => img.shift === menu.shift)?.url ?? null,
+  imagePreview:
+    resolveMenuImageUrl(menu.images.find((img) => img.shift === menu.shift)) ??
+    null,
 });
 
 function ShiftMenuSection({

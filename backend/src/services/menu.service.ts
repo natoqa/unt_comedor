@@ -1,7 +1,7 @@
 import { MealShift } from '@prisma/client';
 import { MenuRepository } from '../repositories';
 import { NotFoundError, ConflictError, ValidationError } from '../utils/errors';
-import { uploadMenuImage, deleteMenuImage } from '../utils/image-storage';
+import { uploadMenuImage, deleteMenuImage, resolveMenuImageUrl } from '../utils/image-storage';
 import { parseDateOnly } from '../utils/date';
 import type { CreateMenuInput, UpdateMenuInput } from '../validators';
 
@@ -15,7 +15,29 @@ const SHIFT_LABELS: Record<MealShift, string> = {
   DINNER: 'cena',
 };
 
+type MenuWithImages = {
+  images: { url: string; publicId: string }[];
+};
+
+function mapMenuImages<T extends MenuWithImages>(menu: T): T {
+  return {
+    ...menu,
+    images: menu.images.map((img) => ({
+      ...img,
+      url: resolveMenuImageUrl(img),
+    })),
+  };
+}
+
 export class MenuService {
+  private mapMenu<T extends MenuWithImages>(menu: T): T {
+    return mapMenuImages(menu);
+  }
+
+  private mapMenus<T extends MenuWithImages>(menus: T[]): T[] {
+    return menus.map((m) => this.mapMenu(m));
+  }
+
   async getAll(query: {
     page?: number;
     limit?: number;
@@ -28,7 +50,7 @@ export class MenuService {
     const page = parseInt(query.page as unknown as string) || 1;
     const limit = parseInt(query.limit as unknown as string) || 10;
 
-    return menuRepository.findAll({
+    const result = await menuRepository.findAll({
       page,
       limit,
       date: query.date,
@@ -37,16 +59,21 @@ export class MenuService {
       shift: query.shift as MealShift | undefined,
       search: query.search,
     });
+    return {
+      menus: this.mapMenus(result.menus),
+      total: result.total,
+    };
   }
 
   async getById(id: string) {
     const menu = await menuRepository.findById(id);
     if (!menu) throw new NotFoundError('Menú');
-    return menu;
+    return this.mapMenu(menu);
   }
 
   async getToday() {
-    return menuRepository.findTodayMenus();
+    const menus = await menuRepository.findTodayMenus();
+    return this.mapMenus(menus);
   }
 
   async create(data: CreateMenuInput) {
@@ -62,7 +89,7 @@ export class MenuService {
       );
     }
 
-    return menuRepository.create({
+    const menu = await menuRepository.create({
       date: menuDate,
       shift: data.shift as MealShift,
       startTime: data.startTime,
@@ -75,6 +102,7 @@ export class MenuService {
       iron: data.iron,
       dishes: data.dishes,
     });
+    return this.mapMenu(menu);
   }
 
   async update(id: string, data: UpdateMenuInput) {
@@ -95,7 +123,11 @@ export class MenuService {
     if (data.iron !== undefined) updateData.iron = data.iron;
     if (data.dishes) updateData.dishes = data.dishes;
 
-    return menuRepository.update(id, updateData as Parameters<typeof menuRepository.update>[1]);
+    const updated = await menuRepository.update(
+      id,
+      updateData as Parameters<typeof menuRepository.update>[1]
+    );
+    return this.mapMenu(updated);
   }
 
   async delete(id: string) {
@@ -124,7 +156,8 @@ export class MenuService {
       await deleteMenuImage(existing.publicId);
     }
 
-    return [await menuRepository.upsertImage(id, shift, result.url, result.publicId)];
+    const image = await menuRepository.upsertImage(id, shift, result.url, result.publicId);
+    return [{ ...image, url: resolveMenuImageUrl(image) }];
   }
 
   async deleteImage(menuId: string, imageId: string) {
