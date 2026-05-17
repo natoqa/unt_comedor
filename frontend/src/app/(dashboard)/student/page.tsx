@@ -12,7 +12,8 @@ import { useAuth } from '@/hooks/useAuth';
 import { useRouter } from 'next/navigation';
 import type { Menu, MealShift } from '@/types';
 import { formatMenuDate, formatTodayHeading, getTodayDateString } from '@/lib/date';
-import { Clock, Phone, QrCode, Calendar, Coffee, Sun, Moon, LogOut, Search } from 'lucide-react';
+import { Clock, Phone, QrCode, Calendar, Coffee, Sun, Moon, LogOut, Search, Ticket } from 'lucide-react';
+import Link from 'next/link';
 
 function ImportantInfoFooter() {
   return (
@@ -366,6 +367,12 @@ function StudentContent() {
                   {tab.label}
                 </button>
               ))}
+              <Link
+                href="/student/tickets"
+                className="text-xs sm:text-sm font-medium text-slate-400 hover:text-white transition-colors flex items-center gap-1"
+              >
+                <Ticket size={14} /> <span className="hidden sm:inline">Reclamos</span>
+              </Link>
             </nav>
           </div>
           <div className="flex items-center gap-2 sm:gap-3">

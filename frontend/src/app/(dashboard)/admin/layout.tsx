@@ -17,7 +17,8 @@ import {
   Menu as MenuIcon,
   Settings,
   Bell,
-  X
+  X,
+  Ticket
 } from 'lucide-react';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -35,6 +36,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
     { name: 'Gestión de Menús', href: '/admin/menus', icon: Utensils },
     { name: 'Gestión de Usuarios', href: '/admin/users', icon: Users },
+    { name: 'Mesa de Servicio', href: '/admin/tickets', icon: Ticket },
     { name: 'Métricas y Valoraciones', href: '/admin/metrics', icon: BarChart3 },
     { name: 'Configuración', href: '/admin/settings', icon: Settings },
   ];
