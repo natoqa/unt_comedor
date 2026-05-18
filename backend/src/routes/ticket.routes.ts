@@ -12,6 +12,7 @@ router.use(authenticate);
 router.post('/', validate(createTicketSchema), ticketController.create.bind(ticketController));
 router.get('/my', ticketController.getMyTickets.bind(ticketController));
 router.get('/stats', authorize(Role.ADMIN), ticketController.getStats.bind(ticketController));
+router.get('/export', authorize(Role.ADMIN), ticketController.exportExcel.bind(ticketController));
 router.get('/', authorize(Role.ADMIN), ticketController.getAll.bind(ticketController));
 router.get('/:id', ticketController.getById.bind(ticketController));
 router.patch('/:id/status', authorize(Role.ADMIN), validate(updateTicketStatusSchema), ticketController.updateStatus.bind(ticketController));

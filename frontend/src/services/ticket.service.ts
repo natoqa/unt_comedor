@@ -48,4 +48,25 @@ export const ticketService = {
     const { data } = await api.get<ApiResponse<TicketStats>>('/tickets/stats');
     return data.data!;
   },
+
+  async exportExcel(filters?: { status?: string; priority?: string; category?: string }) {
+    const params = new URLSearchParams();
+    if (filters) {
+      Object.entries(filters).forEach(([key, value]) => {
+        if (value) params.append(key, value);
+      });
+    }
+    const response = await api.get(`/tickets/export?${params.toString()}`, { responseType: 'blob' });
+    const blob = new Blob([response.data], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `reclamos_${new Date().toISOString().split('T')[0]}.xlsx`);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.URL.revokeObjectURL(url);
+  },
 };

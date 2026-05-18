@@ -5,7 +5,7 @@ import { ticketService } from '@/services/ticket.service';
 import type { Ticket, TicketStats, TicketStatus, TicketPriority, TicketCategory } from '@/types';
 import { TICKET_STATUS_LABELS, TICKET_PRIORITY_LABELS, TICKET_CATEGORY_LABELS } from '@/types';
 import { toast } from 'sonner';
-import { Clock, AlertTriangle, CheckCircle2, XCircle, MessageSquare, ChevronLeft } from 'lucide-react';
+import { Clock, AlertTriangle, CheckCircle2, XCircle, MessageSquare, ChevronLeft, Download } from 'lucide-react';
 
 const STATUS_COLORS: Record<TicketStatus, string> = {
   OPEN: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
@@ -33,6 +33,7 @@ export default function AdminTicketsPage() {
   const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
   const [responseMessage, setResponseMessage] = useState('');
   const [sendingResponse, setSendingResponse] = useState(false);
+  const [exporting, setExporting] = useState(false);
 
   const fetchTickets = async () => {
     try {
@@ -202,9 +203,33 @@ export default function AdminTicketsPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Mesa de Servicio</h1>
-        <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Gestión de tickets y reclamos de estudiantes</p>
+      <div className="flex items-start sm:items-center justify-between flex-col sm:flex-row gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Mesa de Servicio</h1>
+          <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Gestión de tickets y reclamos de estudiantes</p>
+        </div>
+        <button
+          onClick={async () => {
+            setExporting(true);
+            try {
+              await ticketService.exportExcel({
+                status: statusFilter || undefined,
+                priority: priorityFilter || undefined,
+                category: categoryFilter || undefined,
+              });
+              toast.success('Excel descargado');
+            } catch {
+              toast.error('Error al exportar');
+            } finally {
+              setExporting(false);
+            }
+          }}
+          disabled={exporting}
+          className="flex items-center gap-2 px-4 py-2.5 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 disabled:opacity-50 transition-colors"
+        >
+          <Download size={16} />
+          {exporting ? 'Exportando...' : 'Exportar Excel'}
+        </button>
       </div>
 
       {/* Stats */}
