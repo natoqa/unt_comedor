@@ -218,15 +218,15 @@ export default function StudentTicketsPage() {
           <ChevronLeft size={16} /> Volver a mis reclamos
         </button>
 
-        <div className="max-w-2xl">
+        <div className="max-w-2xl w-full">
           <div className="mb-6">
-            <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Nuevo Reclamo</h1>
+            <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">Nuevo Reclamo</h1>
             <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Describe tu problema y lo atenderemos lo antes posible</p>
           </div>
 
-          <div className="border border-slate-200 dark:border-slate-700 rounded-2xl bg-white dark:bg-slate-800 p-5 sm:p-6">
-            <div className="space-y-5">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="border border-slate-200 dark:border-slate-700 rounded-2xl bg-white dark:bg-slate-800 p-4 sm:p-6">
+            <div className="space-y-4 sm:space-y-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Categoría *</label>
                   <select value={formCategory} onChange={(e) => setFormCategory(e.target.value)} className="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all">
@@ -303,7 +303,7 @@ export default function StudentTicketsPage() {
       </div>
 
       {/* Status filter */}
-      <div className="flex gap-1 mb-6 bg-slate-100 dark:bg-slate-800 rounded-lg p-1 w-fit overflow-x-auto">
+      <div className="flex gap-1 mb-6 bg-slate-100 dark:bg-slate-800 rounded-lg p-1 w-full overflow-x-auto">
         {[
           { value: '', label: 'Todos' },
           { value: 'OPEN', label: 'Abiertos' },
@@ -314,7 +314,7 @@ export default function StudentTicketsPage() {
           <button
             key={f.value}
             onClick={() => setStatusFilter(f.value)}
-            className={`px-3 sm:px-4 py-2 rounded-md text-xs sm:text-sm font-medium whitespace-nowrap transition-colors ${
+            className={`px-3 sm:px-4 py-2 rounded-md text-xs sm:text-sm font-medium whitespace-nowrap transition-colors flex-shrink-0 ${
               statusFilter === f.value
                 ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm'
                 : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
@@ -353,10 +353,10 @@ export default function StudentTicketsPage() {
               onClick={() => openDetail(ticket)}
               className="group border border-slate-200 dark:border-slate-700 rounded-2xl bg-white dark:bg-slate-800 p-4 sm:p-5 hover:border-indigo-500/50 hover:shadow-xl hover:-translate-y-0.5 cursor-pointer transition-all duration-300"
             >
-              <div className="flex items-start justify-between gap-3">
+              <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2 sm:gap-3">
                 <div className="min-w-0 flex-1">
-                  <p className="font-semibold text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">{ticket.subject}</p>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1.5 flex items-center gap-3">
+                  <p className="font-semibold text-sm sm:text-base text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors line-clamp-2">{ticket.subject}</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1">
                     <span>{TICKET_CATEGORY_LABELS[ticket.category]}</span>
                     <span className="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-600" />
                     <span>{new Date(ticket.createdAt).toLocaleDateString()}</span>
@@ -368,7 +368,7 @@ export default function StudentTicketsPage() {
                     )}
                   </p>
                 </div>
-                <span className={`px-2.5 py-1 rounded-full text-[11px] font-semibold flex items-center gap-1.5 shrink-0 ${STATUS_COLORS[ticket.status]}`}>
+                <span className={`px-2.5 py-1 rounded-full text-[11px] font-semibold flex items-center gap-1.5 shrink-0 self-start sm:self-auto ${STATUS_COLORS[ticket.status]}`}>
                   {STATUS_ICONS[ticket.status]} {TICKET_STATUS_LABELS[ticket.status]}
                 </span>
               </div>
