@@ -30,7 +30,7 @@ function MenuCard({
           menu.images?.find((img) => img.shift === menu.shift) ?? menu.images?.[0];
         if (!coverImage) return null;
         return (
-          <div className="relative h-24 sm:h-36 bg-slate-50 dark:bg-slate-900/50 overflow-hidden">
+          <div className="relative h-40 sm:h-48 bg-slate-50 dark:bg-slate-900/50 overflow-hidden">
             <Image
               src={coverImage.url}
               alt={`Menú ${menu.shift}`}
