@@ -79,43 +79,44 @@ export default function RegisterPage() {
       label: 'Código Universitario',
       type: 'text',
       placeholder: 'Ej: 2024101001',
-      icon: <User className="w-5 h-5" />,
+      icon: <User className="w-4 h-4 sm:w-5 sm:h-5" />,
     },
     {
       name: 'name',
       label: 'Nombre Completo',
       type: 'text',
       placeholder: 'Ej: Ana Lucía Paredes',
-      icon: <UserCircle className="w-5 h-5" />,
+      icon: <UserCircle className="w-4 h-4 sm:w-5 sm:h-5" />,
     },
     {
       name: 'email',
       label: 'Email Institucional',
       type: 'email',
       placeholder: 'tu.email@unitru.edu.pe',
-      icon: <Mail className="w-5 h-5" />,
+      icon: <Mail className="w-4 h-4 sm:w-5 sm:h-5" />,
     },
     {
       name: 'password',
       label: 'Contraseña',
       type: 'password',
       placeholder: '••••••••',
-      icon: <Lock className="w-5 h-5" />,
+      icon: <Lock className="w-4 h-4 sm:w-5 sm:h-5" />,
     },
     {
       name: 'confirmPassword',
       label: 'Confirmar Contraseña',
       type: 'password',
       placeholder: '••••••••',
-      icon: <Lock className="w-5 h-5" />,
+      icon: <Lock className="w-4 h-4 sm:w-5 sm:h-5" />,
     },
   ];
 
   return (
     <main className="min-h-screen flex flex-col lg:flex-row">
+
       {/* Panel superior - Imagen del comedor (móvil) */}
-      <div className="lg:hidden h-48 relative overflow-hidden">
-        <div 
+      <div className="lg:hidden h-[40dvh] min-h-[220px] relative overflow-hidden">
+        <div
           className="absolute inset-0 bg-cover bg-center"
           style={{ backgroundImage: 'url(/comedor-background.jpg)' }}
         />
@@ -124,7 +125,7 @@ export default function RegisterPage() {
 
       {/* Panel izquierdo - Imagen del comedor (desktop) */}
       <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden">
-        <div 
+        <div
           className="absolute inset-0 bg-cover bg-center"
           style={{ backgroundImage: 'url(/comedor-background.jpg)' }}
         />
@@ -132,14 +133,14 @@ export default function RegisterPage() {
       </div>
 
       {/* Panel derecho - Formulario */}
-      <div className="flex-1 flex items-center justify-center p-6 sm:p-12 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
+      <div className="flex-1 flex items-center justify-center px-5 py-8 sm:p-12 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
         <div className="w-full max-w-md">
 
           <div className="mb-8">
-            <h2 className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
+            <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
               Crear Cuenta
             </h2>
-            <p className="text-slate-600 dark:text-slate-300 mt-2">
+            <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 mt-2">
               Completa tus datos para registrarte
             </p>
           </div>
@@ -165,7 +166,7 @@ export default function RegisterPage() {
                       field.type
                     }
                     placeholder={field.placeholder}
-                    className="w-full pl-10 pr-12 py-3 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all shadow-sm"
+                    className="w-full pl-9 sm:pl-10 pr-12 py-2.5 sm:py-3 text-sm sm:text-base rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all shadow-sm"
                     {...register(field.name)}
                   />
                   {(field.name === 'password' || field.name === 'confirmPassword') && (
@@ -174,8 +175,8 @@ export default function RegisterPage() {
                       onClick={() => field.name === 'password' ? setShowPassword(!showPassword) : setShowConfirmPassword(!showConfirmPassword)}
                       className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
                     >
-                      {field.name === 'password' ? (showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />) :
-                       showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                      {field.name === 'password' ? (showPassword ? <EyeOff className="w-4 h-4 sm:w-5 sm:h-5" /> : <Eye className="w-4 h-4 sm:w-5 sm:h-5" />) :
+                       showConfirmPassword ? <EyeOff className="w-4 h-4 sm:w-5 sm:h-5" /> : <Eye className="w-4 h-4 sm:w-5 sm:h-5" />}
                     </button>
                   )}
                 </div>
@@ -190,7 +191,7 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full py-3 rounded-lg bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold hover:from-purple-700 hover:to-indigo-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg shadow-purple-500/30 hover:shadow-purple-500/40"
+              className="w-full py-2.5 sm:py-3 text-sm sm:text-base rounded-lg bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold hover:from-purple-700 hover:to-indigo-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg shadow-purple-500/30 hover:shadow-purple-500/40"
             >
               {isSubmitting ? (
                 <>
