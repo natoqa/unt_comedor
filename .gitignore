@@ -33,3 +33,5 @@ backend/uploads/
 # Next.js
 frontend/.next/
 frontend/out/
+.vercel
+.env*.local
