@@ -23,7 +23,7 @@ function MenuCard({
   const [expanded, setExpanded] = useState(false);
 
   return (
-    <div className="group relative border border-slate-200 dark:border-slate-700 rounded-2xl bg-white dark:bg-slate-800 overflow-hidden hover:border-indigo-500/50 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+    <div className="group relative border border-slate-200 dark:border-slate-700 rounded-2xl bg-white dark:bg-slate-800 overflow-hidden hover:border-indigo-500/50 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col">
       {/* Imágenes */}
       {(() => {
         const coverImage =
@@ -42,7 +42,7 @@ function MenuCard({
         );
       })()}
 
-      <div className="p-2 sm:p-4 flex flex-col h-auto sm:h-auto sm:min-h-[calc(100%-9rem)]">
+      <div className="p-2 sm:p-4 flex flex-col flex-1">
         {/* Header */}
         <div className="flex items-center justify-between mb-2 sm:mb-3 flex-wrap gap-1 shrink-0">
           <ShiftBadge shift={menu.shift} />
@@ -63,7 +63,7 @@ function MenuCard({
         )}
 
         {/* Scrollable content area */}
-        <div className="overflow-y-auto sm:overflow-y-auto max-h-[150px] sm:max-h-[280px] pr-1 sm:pr-0 space-y-2">
+        <div className="flex-1 overflow-y-auto sm:overflow-y-auto max-h-[150px] sm:max-h-[280px] pr-1 sm:pr-0 space-y-2">
           {/* Platos */}
           <div className="space-y-1.5">
             {menu.dishes.map((dish) => (
