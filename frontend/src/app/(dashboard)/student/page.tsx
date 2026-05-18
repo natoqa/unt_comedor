@@ -63,7 +63,7 @@ function MenuCard({
         )}
 
         {/* Scrollable content area */}
-        <div className="flex-1 overflow-y-auto sm:overflow-y-auto max-h-[150px] sm:max-h-[280px] pr-1 sm:pr-0 space-y-2">
+        <div className="overflow-y-auto sm:overflow-y-auto max-h-[150px] sm:max-h-[280px] pr-1 sm:pr-0 space-y-2">
           {/* Platos */}
           <div className="space-y-1.5">
             {menu.dishes.map((dish) => (
@@ -107,7 +107,7 @@ function MenuCard({
         </div>
 
         {/* Footer */}
-        <div className="mt-auto pt-3 sm:pt-4 border-t border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-3 shrink-0">
+        <div className="pt-3 sm:pt-4 border-t border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-3 shrink-0">
           <div className="flex items-center gap-1.5 text-sm sm:text-base font-medium text-slate-700 dark:text-slate-300">
             <span className="text-amber-400 text-lg sm:text-xl leading-none">★</span>
             {(menu as Menu & { _count?: { ratings: number } })._count?.ratings ?? 0}
