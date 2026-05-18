@@ -10,7 +10,7 @@ import routes from './routes';
 const app = express();
 
 // ── Seguridad ──
-app.use(helmet());
+app.use(helmet()); // CORS fix for Vercel deployment
 app.use(cors({
   origin: config.cors.frontendUrl,
   credentials: true,
