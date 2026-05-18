@@ -30,7 +30,7 @@ function MenuCard({
           menu.images?.find((img) => img.shift === menu.shift) ?? menu.images?.[0];
         if (!coverImage) return null;
         return (
-          <div className="relative h-64 sm:h-80 bg-slate-50 dark:bg-slate-900/50 overflow-hidden">
+          <div className="relative h-40 sm:h-48 bg-slate-50 dark:bg-slate-900/50 overflow-hidden">
             <Image
               src={coverImage.url}
               alt={`Menú ${menu.shift}`}
@@ -63,7 +63,7 @@ function MenuCard({
         )}
 
         {/* Scrollable content area */}
-        <div className="flex-1 overflow-y-auto sm:overflow-visible max-h-[250px] sm:max-h-none pr-1 sm:pr-0 space-y-2">
+        <div className="flex-1 overflow-y-auto sm:overflow-y-auto max-h-[250px] sm:max-h-[300px] pr-1 sm:pr-0 space-y-2">
           {/* Platos */}
           <div className="space-y-1.5">
             {menu.dishes.map((dish) => (
