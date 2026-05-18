@@ -33,7 +33,9 @@ model User {
   createdAt     DateTime @default(now()) @map("created_at")
   updatedAt     DateTime @updatedAt @map("updated_at")
 
-  ratings       Rating[]
+  ratings          Rating[]
+  tickets          Ticket[]
+  ticketResponses  TicketResponse[]
 
   @@map("users")
 }
@@ -105,4 +107,63 @@ model Rating {
 
   @@unique([menuId, userId])
   @@map("ratings")
+}
+
+// ═══════════════════════════════════════════
+// Sistema de Tickets / Mesa de Servicio
+// ═══════════════════════════════════════════
+
+enum TicketStatus {
+  OPEN
+  IN_REVIEW
+  RESOLVED
+  CLOSED
+}
+
+enum TicketPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum TicketCategory {
+  FOOD_QUALITY
+  HYGIENE
+  SERVICE
+  INFRASTRUCTURE
+  SCHEDULE
+  OTHER
+}
+
+model Ticket {
+  id          String         @id @default(uuid())
+  userId      String         @map("user_id")
+  category    TicketCategory
+  priority    TicketPriority @default(MEDIUM)
+  subject     String
+  description String
+  status      TicketStatus   @default(OPEN)
+  resolvedAt  DateTime?      @map("resolved_at")
+  closedAt    DateTime?      @map("closed_at")
+  createdAt   DateTime       @default(now()) @map("created_at")
+  updatedAt   DateTime       @updatedAt @map("updated_at")
+
+  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  responses   TicketResponse[]
+
+  @@map("tickets")
+}
+
+model TicketResponse {
+  id        String   @id @default(uuid())
+  ticketId  String   @map("ticket_id")
+  userId    String   @map("user_id")
+  message   String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  ticket    Ticket   @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("ticket_responses")
 }

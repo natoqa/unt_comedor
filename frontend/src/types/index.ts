@@ -87,6 +87,67 @@ export interface PaginatedResponse<T> {
   };
 }
 
+// Tickets
+export type TicketStatus = 'OPEN' | 'IN_REVIEW' | 'RESOLVED' | 'CLOSED';
+export type TicketPriority = 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT';
+export type TicketCategory = 'FOOD_QUALITY' | 'HYGIENE' | 'SERVICE' | 'INFRASTRUCTURE' | 'SCHEDULE' | 'OTHER';
+
+export const TICKET_STATUS_LABELS: Record<TicketStatus, string> = {
+  OPEN: 'Abierto',
+  IN_REVIEW: 'En Revisión',
+  RESOLVED: 'Resuelto',
+  CLOSED: 'Cerrado',
+};
+
+export const TICKET_PRIORITY_LABELS: Record<TicketPriority, string> = {
+  LOW: 'Baja',
+  MEDIUM: 'Media',
+  HIGH: 'Alta',
+  URGENT: 'Urgente',
+};
+
+export const TICKET_CATEGORY_LABELS: Record<TicketCategory, string> = {
+  FOOD_QUALITY: 'Calidad de Comida',
+  HYGIENE: 'Higiene',
+  SERVICE: 'Atención',
+  INFRASTRUCTURE: 'Infraestructura',
+  SCHEDULE: 'Horarios',
+  OTHER: 'Otro',
+};
+
+export interface Ticket {
+  id: string;
+  userId: string;
+  category: TicketCategory;
+  priority: TicketPriority;
+  subject: string;
+  description: string;
+  status: TicketStatus;
+  resolvedAt?: string;
+  closedAt?: string;
+  createdAt: string;
+  updatedAt: string;
+  user?: { name: string; universityId: string };
+  responses?: TicketResponse[];
+  _count?: { responses: number };
+}
+
+export interface TicketResponse {
+  id: string;
+  ticketId: string;
+  userId: string;
+  message: string;
+  createdAt: string;
+  user?: { name: string; role: Role };
+}
+
+export interface TicketStats {
+  total: number;
+  byStatus: Record<TicketStatus, number>;
+  byPriority: Record<TicketPriority, number>;
+  averageResolutionHours: number | null;
+}
+
 // Auth
 export interface LoginCredentials {
   universityId: string;

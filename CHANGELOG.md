@@ -167,36 +167,139 @@
 
 ---
 
+#### 5. Sistema de Tickets / Mesa de Servicio (ITIL - Incident Management)
+
+**Descripcion:** Modulo completo de gestion de incidentes alineado a ITIL 4. Los estudiantes crean reclamos sobre el servicio del comedor y los administradores gestionan su resolucion con un workflow de estados.
+
+**Modelos Prisma agregados:**
+
+| Modelo | Campos principales |
+|--------|--------------------|
+| `Ticket` | id, userId, category, priority, subject, description, status, resolvedAt, closedAt |
+| `TicketResponse` | id, ticketId, userId, message (hilo de conversacion) |
+
+**Enums agregados:** `TicketStatus` (OPEN, IN_REVIEW, RESOLVED, CLOSED), `TicketPriority` (LOW, MEDIUM, HIGH, URGENT), `TicketCategory` (FOOD_QUALITY, HYGIENE, SERVICE, INFRASTRUCTURE, SCHEDULE, OTHER)
+
+**Backend — Endpoints:**
+
+| Metodo | Ruta | Descripcion |
+|--------|------|-------------|
+| POST | `/api/tickets` | Crear reclamo (estudiante autenticado) |
+| GET | `/api/tickets/my` | Mis reclamos (estudiante) |
+| GET | `/api/tickets` | Todos los reclamos (admin) |
+| GET | `/api/tickets/stats` | Estadisticas del dashboard (admin) |
+| GET | `/api/tickets/export` | Exportar Excel con filtros (admin) |
+| GET | `/api/tickets/:id` | Detalle de ticket (ambos roles) |
+| PATCH | `/api/tickets/:id/status` | Cambiar estado (admin) |
+| POST | `/api/tickets/:id/responses` | Agregar respuesta (ambos roles) |
+
+**Workflow de estados:**
+- `OPEN` → `IN_REVIEW` / `CLOSED`
+- `IN_REVIEW` → `RESOLVED` / `OPEN` / `CLOSED`
+- `RESOLVED` → `CLOSED` / `IN_REVIEW`
+- `CLOSED` → (estado terminal, no se puede reabrir)
+
+**Validaciones (Zod):**
+- Asunto: 5-100 caracteres
+- Descripcion: 10-1000 caracteres
+- Respuestas: 1-1000 caracteres
+- Transiciones de estado validadas en el servicio
+
+**Frontend — Vista Admin (`/admin/tickets`):**
+- Dashboard con 4 KPIs: total tickets, pendientes, alta prioridad, tiempo promedio de resolucion
+- Tabla con columnas: Asunto, Estudiante, Categoria, Prioridad, Estado, Fecha
+- Filtros por estado, prioridad y categoria
+- Vista detalle con botones de cambio de estado y hilo de respuestas
+- Boton "Exportar Excel" que respeta filtros activos
+- Paginacion
+- Link "Mesa de Servicio" agregado al sidebar admin
+
+**Frontend — Vista Estudiante (`/student/tickets`):**
+- Listado de reclamos propios con badges de estado
+- Formulario de creacion (categoria, prioridad, asunto, descripcion)
+- Vista detalle con conversacion tipo chat (mensajes del estudiante vs soporte)
+- Filtro por estado con pills segmentados
+- Empty states con CTA para crear primer reclamo
+
+**Exportar Excel (reclamos):**
+- Columnas: Asunto, Estudiante, Codigo, Categoria, Prioridad, Estado, Fecha Creacion, Fecha Resolucion
+- Colores por estado: azul (Abierto), amarillo (En Revision), verde (Resuelto), gris (Cerrado)
+- Colores por prioridad: gris (Baja), azul (Media), naranja (Alta), rojo (Urgente)
+- Fila de resumen con conteo por estado
+- Respeta filtros activos del admin
+
+**Refactorizacion — Student Layout:**
+- Creado `student/layout.tsx` con navbar compartido (logo, links, avatar, logout) y footer (horarios, contacto)
+- Eliminado navbar/footer duplicado de `student/page.tsx`
+- Toggle "Menu de Hoy / Historial" movido al contenido de la pagina como control segmentado
+- Pagina de tickets hereda automaticamente el navbar y footer del layout
+
+**Archivos creados:**
+- `backend/prisma/schema.prisma` — Modelos Ticket, TicketResponse, enums
+- `backend/src/validators/ticket.validator.ts`
+- `backend/src/repositories/ticket.repository.ts`
+- `backend/src/services/ticket.service.ts`
+- `backend/src/controllers/ticket.controller.ts`
+- `backend/src/routes/ticket.routes.ts`
+- `frontend/src/services/ticket.service.ts`
+- `frontend/src/app/(dashboard)/admin/tickets/page.tsx`
+- `frontend/src/app/(dashboard)/student/tickets/page.tsx`
+- `frontend/src/app/(dashboard)/student/layout.tsx`
+
+**Archivos modificados:**
+- `backend/src/routes/index.ts` — Registro de rutas `/tickets`
+- `backend/src/*/index.ts` — Barrel exports actualizados
+- `frontend/src/types/index.ts` — Tipos Ticket, TicketResponse, TicketStats, labels
+- `frontend/src/services/index.ts` — Export ticketService
+- `frontend/src/app/(dashboard)/admin/layout.tsx` — Link "Mesa de Servicio" en sidebar
+- `frontend/src/app/(dashboard)/student/page.tsx` — Refactorizado (layout compartido)
+
+---
+
 ### Resumen de Archivos Modificados
 
 ```
 backend/
+├── prisma/
+│   └── schema.prisma              (+ Ticket, TicketResponse, enums)
 ├── src/
 │   ├── controllers/
-│   │   ├── rating.controller.ts   (+ exportCsv)
-│   │   └── user.controller.ts     (+ create, update, delete)
+│   │   ├── rating.controller.ts   (+ exportExcel)
+│   │   ├── ticket.controller.ts   (NUEVO — CRUD + exportExcel)
+│   │   └── user.controller.ts     (+ create, update, delete, exportExcel)
 │   ├── repositories/
+│   │   ├── ticket.repository.ts   (NUEVO)
 │   │   └── user.repository.ts     (+ update, delete)
 │   ├── routes/
 │   │   ├── rating.routes.ts       (+ ruta /export)
+│   │   ├── ticket.routes.ts       (NUEVO — 8 endpoints)
 │   │   └── user.routes.ts         (+ rutas POST, PUT, DELETE)
-│   └── services/
-│       ├── rating.service.ts      (+ exportRatings)
-│       └── user.service.ts        (+ create, update, delete)
+│   ├── services/
+│   │   ├── rating.service.ts      (+ exportRatings)
+│   │   ├── ticket.service.ts      (NUEVO)
+│   │   └── user.service.ts        (+ create, update, delete)
+│   └── validators/
+│       └── ticket.validator.ts    (NUEVO)
 
 frontend/
 ├── src/
 │   ├── app/
 │   │   └── (dashboard)/
 │   │       ├── admin/
-│   │       │   ├── layout.tsx         (sidebar mobile funcional)
+│   │       │   ├── layout.tsx         (sidebar mobile + link Mesa de Servicio)
 │   │       │   ├── page.tsx           (responsive acciones rapidas)
 │   │       │   ├── menus/page.tsx     (responsive formulario)
 │   │       │   ├── metrics/page.tsx   (responsive + boton exportar)
+│   │       │   ├── tickets/page.tsx   (NUEVO — dashboard + tabla + detalle)
 │   │       │   └── users/page.tsx     (reescrito con CRUD completo)
 │   │       └── student/
-│   │           └── page.tsx           (responsive + busqueda + filtro turno)
-│   └── services/
-│       ├── rating.service.ts      (+ exportCsv)
-│       └── user.service.ts        (+ create, update, delete)
+│   │           ├── layout.tsx         (NUEVO — navbar + footer compartido)
+│   │           ├── page.tsx           (refactorizado, responsive + busqueda)
+│   │           └── tickets/page.tsx   (NUEVO — crear, listar, detalle)
+│   ├── services/
+│   │   ├── rating.service.ts      (+ exportExcel)
+│   │   ├── ticket.service.ts      (NUEVO)
+│   │   └── user.service.ts        (+ create, update, delete, exportExcel)
+│   └── types/
+│       └── index.ts               (+ Ticket, TicketResponse, TicketStats, labels)
 ```

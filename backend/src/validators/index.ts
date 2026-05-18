@@ -9,3 +9,5 @@ export {
 export type { CreateMenuInput, UpdateMenuInput } from './menu.validator';
 export { createRatingSchema, ratingStatsQuerySchema } from './rating.validator';
 export type { CreateRatingInput } from './rating.validator';
+export { createTicketSchema, updateTicketStatusSchema, createTicketResponseSchema } from './ticket.validator';
+export type { CreateTicketInput, UpdateTicketStatusInput, CreateTicketResponseInput } from './ticket.validator';
