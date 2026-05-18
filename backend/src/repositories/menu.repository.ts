@@ -179,9 +179,8 @@ export class MenuRepository {
   }
 
   async softDelete(id: string) {
-    return prisma.menu.update({
+    return prisma.menu.delete({
       where: { id },
-      data: { isActive: false },
     });
   }
 

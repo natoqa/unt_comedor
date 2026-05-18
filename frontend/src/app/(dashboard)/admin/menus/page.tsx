@@ -9,7 +9,7 @@ import { useRouter } from 'next/navigation';
 import type { Menu, MealShift } from '@/types';
 import { SHIFT_LABELS } from '@/types';
 import { formatMenuDateShort } from '@/lib/date';
-import { resolveMenuImageUrl } from '@/lib/imageUrl';
+import { resolveMenuImageUrl, resolveMenuImageUrlWithCache } from '@/lib/imageUrl';
 import { Pencil, Trash2, Calendar as CalendarIcon, Utensils, Star, Flame, Search, Filter } from 'lucide-react';
 
 const MEAL_SHIFTS: MealShift[] = ['BREAKFAST', 'LUNCH', 'DINNER'];
@@ -349,6 +349,8 @@ function MenuFormModal({
 
         if (menuId && section.image) {
           await menuService.uploadImages(menuId, { [shift]: section.image });
+        } else if (menuId && !section.image && section.imagePreview && !section.imagePreview.startsWith('blob:')) {
+          // Mantener imagen existente si no se seleccionó una nueva
         }
       }
 
@@ -676,7 +678,7 @@ export default function AdminMenusPage() {
                         </div>
                       </td>
                       <td className="px-6 py-4 text-right whitespace-nowrap">
-                        <div className="flex items-center justify-end gap-2 opacity-0 group-hover/row:opacity-100 transition-opacity">
+                        <div className="flex items-center justify-end gap-2 opacity-100 sm:opacity-0 sm:group-hover/row:opacity-100 transition-opacity">
                           <button
                             onClick={() => {
                               setEditingDate(group.date);
