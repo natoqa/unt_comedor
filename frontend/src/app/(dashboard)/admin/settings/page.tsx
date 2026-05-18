@@ -91,11 +91,11 @@ export default function SettingsPage() {
                       { label: 'Cena', start: '19:00', end: '21:00' },
                     ].map((shift) => (
                       <div key={shift.label} className="p-4 rounded-lg border border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50">
-                        <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block mb-2">{shift.label}</span>
-                        <div className="flex items-center gap-2">
-                          <input type="time" defaultValue={shift.start} className="px-2 py-1.5 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm w-full" />
-                          <span className="text-slate-400">-</span>
-                          <input type="time" defaultValue={shift.end} className="px-2 py-1.5 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm w-full" />
+                        <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block mb-3">{shift.label}</span>
+                        <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
+                          <input type="time" defaultValue={shift.start} className="px-2 py-1.5 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm min-w-0" />
+                          <span className="text-slate-400 text-xs">a</span>
+                          <input type="time" defaultValue={shift.end} className="px-2 py-1.5 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm min-w-0" />
                         </div>
                       </div>
                     ))}
