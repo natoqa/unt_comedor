@@ -56,8 +56,17 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="min-h-screen flex">
-      {/* Panel izquierdo - Imagen del comedor */}
+    <main className="min-h-screen flex flex-col lg:flex-row">
+      {/* Panel superior - Imagen del comedor (móvil) */}
+      <div className="lg:hidden h-48 relative overflow-hidden">
+        <div 
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: 'url(/comedor-background.jpg)' }}
+        />
+        <div className="absolute inset-0 bg-black/30" />
+      </div>
+
+      {/* Panel izquierdo - Imagen del comedor (desktop) */}
       <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden">
         <div 
           className="absolute inset-0 bg-cover bg-center"
@@ -69,14 +78,6 @@ export default function LoginPage() {
       {/* Panel derecho - Formulario */}
       <div className="flex-1 flex items-center justify-center p-6 sm:p-12 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
         <div className="w-full max-w-md">
-          {/* Logo móvil */}
-          <div className="lg:hidden flex items-center justify-between mb-8">
-            <div className="flex items-center gap-2">
-              <span className="text-2xl">🍽️</span>
-              <span className="font-semibold text-lg">UNT Comedor</span>
-            </div>
-            <ThemeToggle />
-          </div>
 
           <div className="mb-8">
             <h2 className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
