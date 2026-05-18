@@ -30,7 +30,7 @@ function MenuCard({
           menu.images?.find((img) => img.shift === menu.shift) ?? menu.images?.[0];
         if (!coverImage) return null;
         return (
-          <div className="relative h-40 sm:h-48 bg-slate-50 dark:bg-slate-900/50 overflow-hidden">
+          <div className="relative h-64 sm:h-80 bg-slate-50 dark:bg-slate-900/50 overflow-hidden">
             <Image
               src={coverImage.url}
               alt={`Menú ${menu.shift}`}
@@ -42,7 +42,7 @@ function MenuCard({
         );
       })()}
 
-      <div className="p-2 sm:p-4 flex flex-col h-[calc(100%-6rem)] sm:h-auto sm:min-h-[calc(100%-9rem)]">
+      <div className="p-2 sm:p-4 flex flex-col h-auto sm:h-auto sm:min-h-[calc(100%-9rem)]">
         {/* Header */}
         <div className="flex items-center justify-between mb-2 sm:mb-3 flex-wrap gap-1 shrink-0">
           <ShiftBadge shift={menu.shift} />
