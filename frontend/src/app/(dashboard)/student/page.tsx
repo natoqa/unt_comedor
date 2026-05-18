@@ -63,7 +63,7 @@ function MenuCard({
         )}
 
         {/* Scrollable content area */}
-        <div className="flex-1 overflow-y-auto sm:overflow-y-auto max-h-[250px] sm:max-h-[400px] pr-1 sm:pr-0 space-y-2">
+        <div className="flex-1 overflow-y-auto sm:overflow-y-auto max-h-[200px] sm:max-h-[280px] pr-1 sm:pr-0 space-y-2">
           {/* Platos */}
           <div className="space-y-1.5">
             {menu.dishes.map((dish) => (
