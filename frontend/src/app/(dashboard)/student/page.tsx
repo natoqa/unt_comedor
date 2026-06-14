@@ -390,7 +390,7 @@ function StudentContent() {
                 </div>
                 <input
                   type="date"
-                  className="px-4 py-2.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-shadow [color-scheme:dark] dark:text-white"
+                  className="w-full sm:w-auto px-4 py-2.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-shadow"
                   value={dateFilter}
                   onChange={(e) => {
                     setDateFilter(e.target.value);
