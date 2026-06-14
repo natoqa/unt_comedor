@@ -29,5 +29,56 @@ El sistema web fue disenado bajo una arquitectura cliente-servidor de tres capas
 La capa de presentacion fue desarrollada con React 18, una biblioteca de JavaScript mantenida por Meta que permite construir interfaces de usuario reactivas basadas en componentes reutilizables (Facebook, 2023). React fue elegido por su amplia adopcion en la industria, su ecosistema maduro de librerias auxiliares y su capacidad de construir aplicaciones de pagina unica (SPA) que optimizan la experiencia del usuario en dispositivos moviles, considerando que los estudiantes interactuaran con el sistema principalmente desde sus smartphones.
 La capa de logica de negocio fue implementada mediante una API REST desarrollada con Node.js y el framework Express. Node.js ofrece un entorno de ejecucion asincrono y no bloqueante adecuado para manejar multiples solicitudes concurrentes, caracteristica critica en horarios de maxima demanda del comedor (Tilkov & Vinoski, 2010). La API expone endpoints organizados en tres dominios funcionales: gestion de menus, registro de valoraciones y consulta del panel administrativo.
 La capa de persistencia utiliza PostgreSQL como sistema de gestion de base de datos relacional. PostgreSQL fue seleccionado por su robustez, soporte nativo a tipos de datos avanzados, integridad referencial mediante claves foraneas y su herramienta de administracion grafica pgAdmin 4, que facilita el diseno, monitoreo y mantenimiento del esquema de datos durante el desarrollo y la operacion del sistema (The PostgreSQL Global Development Group, 2023). La base de datos se aloja en la plataforma Render, un servicio PaaS (Plataforma como Servicio) en la nube que elimina la necesidad de administrar infraestructura de servidores, permitiendo al equipo concentrarse en la logica de la aplicacion (Shaji George & Sagayarajan, 2023).
-Para la autenticacion y autorizacion de usuarios, se implemento el estandar JSON Web Token (JWT), que permite verificar la identidad del usuario en cada solicitud a la API sin mantener estado en el servidor, garantizando la seguridad de las sesiones y la diferenciacion de roles (estudiante y administrador del comedor).
-La gestion de imagenes del menu constituye un componente clave del sistema, dado que el comedor ya publica flyers visuales con fotografias de los platos en sus redes sociales. Para replicar y estructurar esta experiencia visual dentro del sistema, se integro la plataforma Cloudinary como servicio de almacenamiento y transformacion de imagenes en la nube. El flujo de carga es el siguiente: el administrador selecciona hasta tres imagenes por turno desde el formulario de publicacion del menu; el frontend las envia al backend mediante una solicitud multipart/form-data; el middleware Multer procesa los archivos en memoria y los transmite a la API de Cloudinary, que retorna las URLs publicas y el public_id de cada imagen; finalmente, dichas URLs se persisten en la tabla menu_imagenes de PostgreSQL, vinculadas al registro del menu correspondiente. Este enfoque externaliza el almacenamiento binario a un servicio especializado, manteniendo la base de datos relacional liviana y los tiempos de respuesta de la API optimos (Cloudinary, 2023).
+Para la autenticación y autorización de usuarios, se implementó el estándar JSON Web Token (JWT), que permite verificar la identidad del usuario en cada solicitud a la API sin mantener estado en el servidor, garantizando la seguridad de las sesiones y la diferenciación de roles (estudiante y administrador del comedor).
+La gestión de imágenes del menú constituye un componente clave del sistema, dado que el comedor ya publica flyers visuales con fotografías de los platos en sus redes sociales. Para replicar y estructurar esta experiencia visual dentro del sistema, se integró la plataforma Cloudinary como servicio de almacenamiento y transformación de imágenes en la nube. El flujo de carga es el siguiente: el administrador selecciona hasta tres imágenes por turno desde el formulario de publicación del menú; el frontend las envía al backend mediante una solicitud multipart/form-data; el middleware Multer procesa los archivos en memoria y los transmite a la API de Cloudinary, que retorna las URLs públicas y el public_id de cada imagen; finalmente, dichas URLs se persisten en la tabla menu_imagenes de PostgreSQL, vinculadas al registro del menú correspondiente. Este enfoque externaliza el almacenamiento binario a un servicio especializado, manteniendo la base de datos relacional liviana y los tiempos de respuesta de la API óptimos (Cloudinary, 2023).
+
+### 2.3 Características Destacadas del Sistema
+
+El sistema desarrollado presenta una serie de funcionalidades que solucionan las limitaciones del método anterior basado en WhatsApp y habilitan una gestión estructurada y orientada a la mejora continua. A continuación, se detallan las características más relevantes:
+
+#### 2.3.1 Módulo de Gestión de Menús
+El sistema permite a los administradores realizar operaciones CRUD (Crear, Leer, Actualizar, Eliminar) completas sobre los menús, organizados por fecha y turno (desayuno, almuerzo, cena). Cada menú incluye:
+- Horario de servicio (hora de inicio y fin)
+- Descripción del menú
+- Lista de platos con sus categorías
+- Información nutricional detallada (calorías, proteínas, carbohidratos, grasas, hierro)
+- Hasta 3 imágenes por turno, almacenadas en Cloudinary
+- Soft delete para mantener el historial sin perder datos
+
+Para los estudiantes, el módulo ofrece dos vistas principales:
+1. **Menú de Hoy**: Visualización de los menús del día actual, filtrados por turno y con búsqueda por plato. Cada tarjeta de menú incluye la imagen destacada, la lista de platos, horario y la opción de valorar.
+2. **Historial de Menús**: Consulta de menús pasados, agrupados por fecha y con filtros por fecha y búsqueda por plato. La información nutricional se muestra de forma expandible para no saturar la interfaz.
+
+#### 2.3.2 Sistema de Valoraciones Anónimas
+Uno de los aspectos más importantes del sistema es el mecanismo de evaluación estructurada y anónima, que soluciona la limitación de los comentarios públicos en WhatsApp. Las características clave son:
+- **5 Dimensiones de Evaluación**: Los estudiantes valoran el menú en 5 áreas específicas: sabor, cantidad, variedad, higiene y atención, cada una con escala de 1 a 5 estrellas.
+- **Comentario Opcional**: Los usuarios pueden agregar un comentario textual anónimo para proporcionar feedback más detallado.
+- **Valoración Única**: Cada estudiante solo puede valorar un menú una vez, evitando duplicados y garantizando la integridad de los datos.
+- **Verificación Previa**: Antes de mostrar el formulario de valoración, el sistema verifica si el usuario ya ha evaluado ese menú para evitar repeticiones.
+
+#### 2.3.3 Dashboard Analítico para Administradores
+El corazón del sistema para la mejora continua es el dashboard administrativo, que transforma los datos de valoraciones en información accionable mediante visualizaciones interactivas desarrolladas con Recharts:
+1. **KPIs Principales**: Tarjetas con la satisfacción general, total de valoraciones, mejor dimensión y peor dimensión, con indicadores de color según el valor (verde para ≥4, amarillo para ≥3, rojo para <3).
+2. **Radar de Dimensiones**: Gráfico de radar que muestra el perfil de satisfacción en las 5 áreas evaluadas.
+3. **Distribución de Calificaciones**: Gráfico de dona que muestra la proporción de estrellas otorgadas (de 1 a 5).
+4. **Tendencias Temporales**: Gráfico de líneas que muestra la evolución de la satisfacción en cada dimensión durante la semana, mes o trimestre, con selector de periodo.
+5. **Comparación por Turno**: Gráfico de barras que compara la satisfacción general entre desayuno, almuerzo y cena, más una tabla detallada con los promedios de cada dimensión por turno y indicadores de color.
+6. **Comentarios Recientes**: Feed con los últimos comentarios anónimos, incluyendo el promedio de la valoración asociada, el turno y la fecha del menú.
+
+#### 2.3.4 Sistema de Tickets (Mesa de Servicio)
+Adicionalmente, se implementó un módulo de tickets que permite a los estudiantes reportar incidencias o sugerencias de forma estructurada, y a los administradores gestionarlas. Las características son:
+- **Categorías Predefinidas**: Calidad de la comida, higiene, servicio, infraestructura, horario y otros.
+- **Prioridades**: Baja, media, alta y urgente.
+- **Estados**: Abierto, en revisión, resuelto y cerrado.
+- **Respuestas**: Los administradores pueden responder a los tickets, creando un hilo de comunicación.
+
+#### 2.3.5 Aspectos Técnicos y de Seguridad
+El sistema incorpora medidas de seguridad y buenas prácticas de desarrollo:
+- **Autenticación JWT**: Tokens seguros con expiración configurable para proteger las rutas de la API.
+- **Hashing de Contraseñas**: Uso de bcrypt con 12 rounds para almacenar las credenciales de forma segura.
+- **Validación de Inputs**: Zod en frontend y backend para prevenir inyecciones y datos inválidos.
+- **CORS Restringido**: Configurado para permitir solo solicitudes desde el dominio del frontend.
+- **Helmet**: Middleware para agregar headers de seguridad HTTP.
+- **Rate Limiting**: Límite de 100 solicitudes por 15 minutos para prevenir abusos.
+- **Arquitectura Limpia**: Separación en capas (controllers, services, repositories) siguiendo principios SOLID.
+- **Modo Oscuro/Claro**: Interfaz adaptable con toggle de tema para mejor experiencia del usuario.

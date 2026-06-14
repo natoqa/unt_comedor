@@ -5,11 +5,11 @@ import Image from 'next/image';
 import { toast } from 'sonner';
 import { ShiftBadge, NutritionCard } from '@/components/shared/MenuComponents';
 import { RatingModal } from '@/components/shared/RatingModal';
-import { menuService } from '@/services';
+import { menuService, ratingService } from '@/services';
 import { useAuth } from '@/hooks/useAuth';
 import type { Menu, MealShift } from '@/types';
 import { formatMenuDate, formatTodayHeading, getTodayDateString } from '@/lib/date';
-import { Calendar, Coffee, Sun, Moon, Search } from 'lucide-react';
+import { Calendar, Coffee, Sun, Moon, Search, Users } from 'lucide-react';
 
 function MenuCard({
   menu,
@@ -21,6 +21,22 @@ function MenuCard({
   showDate?: boolean;
 }) {
   const [expanded, setExpanded] = useState(false);
+  const [hasRated, setHasRated] = useState(false);
+  const [checkingRating, setCheckingRating] = useState(true);
+
+  useEffect(() => {
+    const checkRating = async () => {
+      try {
+        const result = await ratingService.checkUserRating(menu.id);
+        setHasRated(result.hasRated);
+      } catch {
+        // Ignore errors
+      } finally {
+        setCheckingRating(false);
+      }
+    };
+    checkRating();
+  }, [menu.id]);
 
   return (
     <div className="group relative border border-slate-200 dark:border-slate-700 rounded-2xl bg-white dark:bg-slate-800 overflow-hidden hover:border-indigo-500/50 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col">
@@ -109,14 +125,14 @@ function MenuCard({
         {/* Footer */}
         <div className="pt-3 sm:pt-4 border-t border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-3 shrink-0">
           <div className="flex items-center gap-1.5 text-sm sm:text-base font-medium text-slate-700 dark:text-slate-300">
-            <span className="text-amber-400 text-lg sm:text-xl leading-none">★</span>
+            <Users className="w-4 h-4 sm:w-5 sm:h-5 text-indigo-500" />
             {(menu as Menu & { _count?: { ratings: number } })._count?.ratings ?? 0}
           </div>
           <button
             onClick={onRateClick}
             className="text-xs sm:text-sm px-3 sm:px-4 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 hover:shadow-md hover:shadow-indigo-200 dark:hover:shadow-none transition-all font-medium w-full sm:w-auto shrink-0"
           >
-            Valorar Menú
+            {hasRated ? 'Ver Valoración' : 'Valorar Menú'}
           </button>
         </div>
       </div>
