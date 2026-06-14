@@ -5,7 +5,6 @@ import { useState, useEffect } from 'react';
 import {
   Utensils,
   Users,
-  Star,
   Search,
   BarChart3,
   ShieldCheck,
@@ -51,7 +50,7 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* Metrics Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-3 gap-4">
         {/* Card 1 */}
         <div className="bg-white dark:bg-slate-800 rounded-xl p-5 border border-slate-100 dark:border-slate-700 shadow-sm relative overflow-hidden transition-colors">
           {loading && <div className="absolute inset-0 bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm z-10 flex items-center justify-center"><div className="w-5 h-5 border-2 border-indigo-600 dark:border-indigo-400 border-t-transparent rounded-full animate-spin" /></div>}
@@ -76,7 +75,7 @@ export default function AdminDashboardPage() {
         <div className="bg-white dark:bg-slate-800 rounded-xl p-5 border border-slate-100 dark:border-slate-700 shadow-sm relative overflow-hidden transition-colors">
           {loading && <div className="absolute inset-0 bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm z-10 flex items-center justify-center"><div className="w-5 h-5 border-2 border-indigo-600 dark:border-indigo-400 border-t-transparent rounded-full animate-spin" /></div>}
           <div className="w-10 h-10 rounded-lg bg-amber-50 dark:bg-amber-900/30 flex items-center justify-center text-amber-600 dark:text-amber-400 mb-4">
-            <Star size={20} />
+            <Users size={20} />
           </div>
           <h3 className="text-3xl font-bold text-slate-900 dark:text-white">{stats?.ratingsToday ?? '...'}</h3>
           <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-1">Valoraciones Hoy</p>
@@ -86,13 +85,7 @@ export default function AdminDashboardPage() {
       {/* Quick Actions */}
       <div>
         <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-4">Acciones Rápidas</h2>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-          <Link href="/admin/menus" className="bg-white dark:bg-slate-800 rounded-xl p-4 sm:p-6 border border-slate-100 dark:border-slate-700 shadow-sm hover:border-indigo-100 dark:hover:border-indigo-500 hover:shadow-md transition-all flex flex-col items-center justify-center gap-2 sm:gap-3 group">
-            <div className="text-slate-400 dark:text-slate-500 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
-              <Search size={22} strokeWidth={1.5} />
-            </div>
-            <span className="text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white text-center">Validar Menús</span>
-          </Link>
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
           <Link href="/admin/menus" className="bg-white dark:bg-slate-800 rounded-xl p-4 sm:p-6 border border-slate-100 dark:border-slate-700 shadow-sm hover:border-indigo-100 dark:hover:border-indigo-500 hover:shadow-md transition-all flex flex-col items-center justify-center gap-2 sm:gap-3 group">
             <div className="text-slate-400 dark:text-slate-500 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
               <Utensils size={22} strokeWidth={1.5} />
