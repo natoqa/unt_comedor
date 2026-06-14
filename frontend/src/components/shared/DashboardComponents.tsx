@@ -18,14 +18,14 @@ const colorMap = {
 
 export function KpiCard({ title, value, subtitle, icon, trend, color = 'primary' }: KpiCardProps) {
   return (
-    <div className="p-5 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))]">
-      <div className="flex items-start justify-between mb-3">
-        <p className="text-sm text-[hsl(var(--muted-foreground))]">{title}</p>
-        <span className={`w-9 h-9 rounded-lg flex items-center justify-center text-lg ${colorMap[color]}`}>
+    <div className="p-3 sm:p-5 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))]">
+      <div className="flex items-start justify-between mb-2 sm:mb-3">
+        <p className="text-xs sm:text-sm text-[hsl(var(--muted-foreground))]">{title}</p>
+        <span className={`w-8 h-8 sm:w-9 sm:h-9 rounded-lg flex items-center justify-center text-base sm:text-lg ${colorMap[color]}`}>
           {icon}
         </span>
       </div>
-      <p className="text-2xl font-bold text-[hsl(var(--foreground))]">{value}</p>
+      <p className="text-xl sm:text-2xl font-bold text-[hsl(var(--foreground))]">{value}</p>
       <div className="flex items-center gap-2 mt-1">
         {trend && (
           <span className={`text-xs font-medium ${trend.value >= 0 ? 'text-emerald-600' : 'text-red-500'}`}>
@@ -33,7 +33,7 @@ export function KpiCard({ title, value, subtitle, icon, trend, color = 'primary'
           </span>
         )}
         {subtitle && (
-          <p className="text-xs text-[hsl(var(--muted-foreground))]">{subtitle}</p>
+          <p className="text-[10px] sm:text-xs text-[hsl(var(--muted-foreground))]">{subtitle}</p>
         )}
       </div>
     </div>
@@ -52,12 +52,12 @@ export function ChartCard({
   action?: React.ReactNode;
 }) {
   return (
-    <div className="p-5 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))]">
-      <div className="flex items-start justify-between mb-4">
+    <div className="p-3 sm:p-5 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))]">
+      <div className="flex items-start justify-between mb-3 sm:mb-4">
         <div>
-          <h3 className="font-semibold text-[hsl(var(--foreground))]">{title}</h3>
+          <h3 className="text-sm sm:font-semibold text-[hsl(var(--foreground))]">{title}</h3>
           {subtitle && (
-            <p className="text-xs text-[hsl(var(--muted-foreground))] mt-0.5">{subtitle}</p>
+            <p className="text-[10px] sm:text-xs text-[hsl(var(--muted-foreground))] mt-0.5">{subtitle}</p>
           )}
         </div>
         {action}

@@ -125,12 +125,12 @@ function DashboardContent() {
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4 sm:mb-6">
           <div>
-            <h1 className="text-2xl font-bold">Dashboard de Satisfacción 📊</h1>
-            <p className="text-sm text-[hsl(var(--muted-foreground))]">Métricas y análisis para mejora continua del servicio</p>
+            <h1 className="text-xl sm:text-2xl font-bold">Dashboard de Satisfacción 📊</h1>
+            <p className="text-xs sm:text-sm text-[hsl(var(--muted-foreground))]">Métricas y análisis para mejora continua del servicio</p>
           </div>
           <div className="flex gap-1 p-1 bg-[hsl(var(--secondary))] rounded-lg">
             {([
@@ -160,9 +160,9 @@ function DashboardContent() {
         ) : !globalStats || globalStats.totalRatings === 0 ? (
           <EmptyState message="Aún no hay valoraciones para mostrar estadísticas" />
         ) : (
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             {/* ── KPIs ── */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
               <KpiCard
                 title="Satisfacción General"
                 value={globalStats.overallAverage?.toFixed(1) ?? '—'}
@@ -221,11 +221,11 @@ function DashboardContent() {
             </div>
 
             {/* ── Radar + Distribución ── */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
               {/* Radar de dimensiones */}
               <ChartCard title="Promedio por Dimensión" subtitle="Perfil de satisfacción en las 5 áreas evaluadas">
                 {radarData.length > 0 ? (
-                  <ResponsiveContainer width="100%" height={300}>
+                  <ResponsiveContainer width="100%" height={250}>
                     <RadarChart data={radarData} outerRadius="70%">
                       <PolarGrid stroke="hsl(var(--border))" />
                       <PolarAngleAxis
@@ -253,14 +253,14 @@ function DashboardContent() {
               {/* Distribución tipo pie */}
               <ChartCard title="Distribución de Calificaciones" subtitle="Proporción de estrellas otorgadas">
                 {pieData.some((d) => d.value > 0) ? (
-                  <ResponsiveContainer width="100%" height={300}>
+                  <ResponsiveContainer width="100%" height={250}>
                     <PieChart>
                       <Pie
                         data={pieData}
                         cx="50%"
                         cy="50%"
-                        innerRadius={60}
-                        outerRadius={100}
+                        innerRadius={50}
+                        outerRadius={80}
                         paddingAngle={3}
                         dataKey="value"
                         label={({ name, percent }) =>
@@ -291,7 +291,7 @@ function DashboardContent() {
               subtitle={`Evolución diaria — último${period === 'week' ? 's 7 días' : period === 'month' ? ' mes' : ' trimestre'}`}
             >
               {trendData.length > 1 ? (
-                <ResponsiveContainer width="100%" height={350}>
+                <ResponsiveContainer width="100%" height={300}>
                   <LineChart data={trendData}>
                     <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                     <XAxis
@@ -333,10 +333,10 @@ function DashboardContent() {
             </ChartCard>
 
             {/* ── Comparación por turno ── */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
               <ChartCard title="Comparación por Turno" subtitle="Promedio general por turno">
                 {shiftBarData.some((d) => d.promedio > 0) ? (
-                  <ResponsiveContainer width="100%" height={300}>
+                  <ResponsiveContainer width="100%" height={250}>
                     <BarChart data={shiftBarData} barSize={40}>
                       <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                       <XAxis
