@@ -7,7 +7,7 @@ export const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  timeout: 10000,
+  timeout: 30000,
 });
 
 // Interceptor: agregar token JWT a cada request
@@ -24,16 +24,26 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Interceptor: manejar errores de respuesta
+// Interceptor: reintentos automáticos para errores de red/timeout
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
+  async (error) => {
+    const originalRequest = error.config;
+    
     if (error.response?.status === 401) {
       if (typeof window !== 'undefined') {
         localStorage.removeItem('token');
         window.location.href = '/login';
       }
+      return Promise.reject(error);
     }
+
+    if (!originalRequest._retry && (error.code === 'ECONNABORTED' || !error.response || error.response.status >= 500)) {
+      originalRequest._retry = true;
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      return api(originalRequest);
+    }
+
     return Promise.reject(error);
   }
 );
