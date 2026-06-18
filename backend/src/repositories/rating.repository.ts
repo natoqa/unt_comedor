@@ -267,6 +267,10 @@ export class RatingRepository {
     const startDate = new Date(todayDate);
     startDate.setUTCDate(startDate.getUTCDate() - days);
 
+    console.log("=== getMenuExtremes (Neon DB) ===");
+    console.log("Today (Lima):", todayStr);
+    console.log("Start date:", startDate.toISOString().split('T')[0]);
+
     // First, get all menus in the last 7 days with their ratings
     const menus = await prisma.menu.findMany({
       where: {
@@ -283,6 +287,11 @@ export class RatingRepository {
           },
         },
       },
+    });
+
+    console.log("Menus from Neon DB found for getMenuExtremes:", menus.length);
+    menus.forEach((menu, index) => {
+      console.log(`${index + 1}. Date: ${menu.date.toISOString().split('T')[0]}, Shift: ${menu.shift}, Ratings: ${menu.ratings.length}`);
     });
 
     const dayStats = new Map<string, number[]>(); // date -> array of averages (1 per shift)
@@ -330,6 +339,10 @@ export class RatingRepository {
     const startDate = new Date(todayDate);
     startDate.setUTCDate(startDate.getUTCDate() - days);
 
+    console.log("=== getShiftExtremes (Neon DB) ===");
+    console.log("Today (Lima):", todayStr);
+    console.log("Start date:", startDate.toISOString().split('T')[0]);
+
     const menus = await prisma.menu.findMany({
       where: {
         date: { gte: startDate },
@@ -345,6 +358,11 @@ export class RatingRepository {
           },
         },
       },
+    });
+
+    console.log("Menus from Neon DB found:", menus.length);
+    menus.forEach((menu, index) => {
+      console.log(`${index + 1}. Date: ${menu.date.toISOString().split('T')[0]}, Shift: ${menu.shift}, Ratings: ${menu.ratings.length}`);
     });
 
     const extremes = {
