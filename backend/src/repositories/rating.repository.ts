@@ -324,14 +324,12 @@ export class RatingRepository {
   }
 
   async getShiftExtremes(days: number = 7) {
-    const todayStr = getTodayDateString(); // YYYY-MM-DD in America/Lima timezone
+    const todayStr = getTodayDateString();
     
-    // Calculate start date by subtracting days from today (in America/Lima timezone)
     const todayDate = parseDateOnly(todayStr);
     const startDate = new Date(todayDate);
     startDate.setUTCDate(startDate.getUTCDate() - days);
 
-    // Get all menus in last 7 days with their ratings
     const menus = await prisma.menu.findMany({
       where: {
         date: { gte: startDate },
@@ -369,7 +367,7 @@ export class RatingRepository {
         shiftEx.max = avg;
         shiftEx.best = { 
           id: menu.id, 
-          date: menu.date, 
+          date: menu.date.toISOString().split('T')[0], // ✅ Fix
           shift: menu.shift, 
           average: Math.round(avg * 100) / 100 
         };
@@ -378,7 +376,7 @@ export class RatingRepository {
         shiftEx.min = avg;
         shiftEx.worst = { 
           id: menu.id, 
-          date: menu.date, 
+          date: menu.date.toISOString().split('T')[0], // ✅ Fix
           shift: menu.shift, 
           average: Math.round(avg * 100) / 100 
         };
