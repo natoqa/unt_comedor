@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import { toast } from 'sonner';
 import { ProtectedRoute } from '@/components/shared/ProtectedRoute';
 import { ShiftBadge } from '@/components/shared/MenuComponents';
-import { menuService } from '@/services';
+import { menuService, settingsService } from '@/services';
 import { useRouter } from 'next/navigation';
 import type { Menu, MealShift } from '@/types';
 import { SHIFT_LABELS } from '@/types';
@@ -13,12 +13,6 @@ import { resolveMenuImageUrl, resolveMenuImageUrlWithCache } from '@/lib/imageUr
 import { Pencil, Trash2, Calendar as CalendarIcon, Utensils, Users, Flame, Search, Filter } from 'lucide-react';
 
 const MEAL_SHIFTS: MealShift[] = ['BREAKFAST', 'LUNCH', 'DINNER'];
-
-const SHIFT_DEFAULTS: Record<MealShift, { startTime: string; endTime: string }> = {
-  BREAKFAST: { startTime: '07:00', endTime: '09:00' },
-  LUNCH: { startTime: '12:00', endTime: '14:00' },
-  DINNER: { startTime: '19:00', endTime: '21:00' },
-};
 
 type ShiftSectionData = {
   menuId?: string;
@@ -35,19 +29,46 @@ type ShiftSectionData = {
   imagePreview: string | null;
 };
 
-const emptyShiftSection = (shift: MealShift): ShiftSectionData => ({
-  startTime: SHIFT_DEFAULTS[shift].startTime,
-  endTime: SHIFT_DEFAULTS[shift].endTime,
-  description: '',
-  calories: '',
-  proteins: '',
-  carbs: '',
-  fats: '',
-  iron: '',
-  dishes: [{ name: '', category: 'Principal' }],
-  image: null,
-  imagePreview: null,
-});
+const emptyShiftSection = (
+  shift: MealShift, 
+  settings?: {
+    breakfastStart: string;
+    breakfastEnd: string;
+    lunchStart: string;
+    lunchEnd: string;
+    dinnerStart: string;
+    dinnerEnd: string;
+  }
+): ShiftSectionData => {
+  const defaults: Record<MealShift, { startTime: string; endTime: string }> = {
+    BREAKFAST: { 
+      startTime: settings?.breakfastStart || '07:00', 
+      endTime: settings?.breakfastEnd || '09:00' 
+    },
+    LUNCH: { 
+      startTime: settings?.lunchStart || '12:00', 
+      endTime: settings?.lunchEnd || '14:00' 
+    },
+    DINNER: { 
+      startTime: settings?.dinnerStart || '19:00', 
+      endTime: settings?.dinnerEnd || '21:00' 
+    },
+  };
+
+  return {
+    startTime: defaults[shift].startTime,
+    endTime: defaults[shift].endTime,
+    description: '',
+    calories: '',
+    proteins: '',
+    carbs: '',
+    fats: '',
+    iron: '',
+    dishes: [{ name: '', category: 'Principal' }],
+    image: null,
+    imagePreview: null,
+  };
+};
 
 const sectionFromMenu = (menu: Menu): ShiftSectionData => ({
   menuId: menu.id,
@@ -244,9 +265,10 @@ function MenuFormModal({
 }) {
   const isEdit = !!editDate;
   const [loading, setLoading] = useState(false);
-  const [loadingData, setLoadingData] = useState(isEdit);
+  const [loadingData, setLoadingData] = useState(true);
   const [date, setDate] = useState(editDate || '');
   const [activeShift, setActiveShift] = useState<MealShift>('BREAKFAST');
+  const [settings, setSettings] = useState<any>(null);
   const [sections, setSections] = useState<Record<MealShift, ShiftSectionData>>({
     BREAKFAST: emptyShiftSection('BREAKFAST'),
     LUNCH: emptyShiftSection('LUNCH'),
@@ -263,28 +285,39 @@ function MenuFormModal({
   };
 
   useEffect(() => {
-    if (!editDate) return;
-    const loadDayMenus = async () => {
+    const loadData = async () => {
       setLoadingData(true);
       try {
-        const res = await menuService.getAll({ date: editDate, limit: 10 });
-        const next: Record<MealShift, ShiftSectionData> = {
-          BREAKFAST: emptyShiftSection('BREAKFAST'),
-          LUNCH: emptyShiftSection('LUNCH'),
-          DINNER: emptyShiftSection('DINNER'),
-        };
-        res.data.forEach((menu) => {
-          next[menu.shift] = sectionFromMenu(menu);
-        });
-        setSections(next);
-        setDate(editDate);
+        const settingsData = await settingsService.get();
+        setSettings(settingsData);
+        
+        if (editDate) {
+          const res = await menuService.getAll({ date: editDate, limit: 10 });
+          const next: Record<MealShift, ShiftSectionData> = {
+            BREAKFAST: emptyShiftSection('BREAKFAST', settingsData),
+            LUNCH: emptyShiftSection('LUNCH', settingsData),
+            DINNER: emptyShiftSection('DINNER', settingsData),
+          };
+          res.data.forEach((menu) => {
+            next[menu.shift] = sectionFromMenu(menu);
+          });
+          setSections(next);
+          setDate(editDate);
+        } else {
+          const next: Record<MealShift, ShiftSectionData> = {
+            BREAKFAST: emptyShiftSection('BREAKFAST', settingsData),
+            LUNCH: emptyShiftSection('LUNCH', settingsData),
+            DINNER: emptyShiftSection('DINNER', settingsData),
+          };
+          setSections(next);
+        }
       } catch {
-        toast.error('Error al cargar menús del día');
+        toast.error('Error al cargar datos');
       } finally {
         setLoadingData(false);
       }
     };
-    loadDayMenus();
+    loadData();
   }, [editDate]);
 
   const updateSection = (shift: MealShift, data: ShiftSectionData) => {

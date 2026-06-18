@@ -130,17 +130,17 @@ export default function SettingsPage() {
                     ].map((shift) => (
                       <div key={shift.label} className="p-4 rounded-lg border border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50">
                         <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block mb-3">{shift.label}</span>
-                        <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
+                        <div className="flex items-center gap-2">
                           <input 
                             type="time" 
-                            className="px-2 py-1.5 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm min-w-0"
+                            className="flex-1 px-3 py-2 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm"
                             value={settings?.[shift.start]}
                             onChange={(e) => handleChange(shift.start, e.target.value)}
                           />
                           <span className="text-slate-400 text-xs">a</span>
                           <input 
                             type="time" 
-                            className="px-2 py-1.5 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm min-w-0"
+                            className="flex-1 px-3 py-2 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm"
                             value={settings?.[shift.end]}
                             onChange={(e) => handleChange(shift.end, e.target.value)}
                           />
