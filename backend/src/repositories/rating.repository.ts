@@ -1,5 +1,6 @@
 import { prisma } from '../config';
 import { MealShift, Prisma } from '@prisma/client';
+import { getTodayDateString, parseDateOnly } from '../utils/date';
 
 interface StatsFilters {
   menuId?: string;
@@ -145,11 +146,13 @@ export class RatingRepository {
   }
 
   async getTrends(period: 'week' | 'month' | 'quarter' = 'week') {
-    const now = new Date();
+    const todayStr = getTodayDateString(); // YYYY-MM-DD in America/Lima timezone
     const daysBack = period === 'week' ? 7 : period === 'month' ? 30 : 90;
-    const startDate = new Date(now);
-    startDate.setDate(startDate.getDate() - daysBack);
-    startDate.setHours(0, 0, 0, 0);
+    
+    // Calculate start date by subtracting days from today (in America/Lima timezone)
+    const todayDate = parseDateOnly(todayStr);
+    const startDate = new Date(todayDate);
+    startDate.setUTCDate(startDate.getUTCDate() - daysBack);
 
     const menus = await prisma.menu.findMany({
       where: {
@@ -179,8 +182,8 @@ export class RatingRepository {
     }>();
 
     for (const menu of menus) {
+      const dateKey = menu.date.toISOString().split('T')[0];
       for (const r of menu.ratings) {
-        const dateKey = menu.date.toISOString().split('T')[0];
         if (!grouped.has(dateKey)) {
           grouped.set(dateKey, {
             taste: [], quantity: [], variety: [], hygiene: [], service: [],
@@ -257,10 +260,12 @@ export class RatingRepository {
   }
 
   async getMenuExtremes(days: number = 7) {
-    const now = new Date();
-    const startDate = new Date(now);
-    startDate.setDate(startDate.getDate() - days);
-    startDate.setHours(0, 0, 0, 0);
+    const todayStr = getTodayDateString(); // YYYY-MM-DD in America/Lima timezone
+    
+    // Calculate start date by subtracting days from today (in America/Lima timezone)
+    const todayDate = parseDateOnly(todayStr);
+    const startDate = new Date(todayDate);
+    startDate.setUTCDate(startDate.getUTCDate() - days);
 
     // First, get all menus in the last 7 days with their ratings
     const menus = await prisma.menu.findMany({
@@ -319,10 +324,12 @@ export class RatingRepository {
   }
 
   async getShiftExtremes(days: number = 7) {
-    const now = new Date();
-    const startDate = new Date(now);
-    startDate.setDate(startDate.getDate() - days);
-    startDate.setHours(0, 0, 0, 0);
+    const todayStr = getTodayDateString(); // YYYY-MM-DD in America/Lima timezone
+    
+    // Calculate start date by subtracting days from today (in America/Lima timezone)
+    const todayDate = parseDateOnly(todayStr);
+    const startDate = new Date(todayDate);
+    startDate.setUTCDate(startDate.getUTCDate() - days);
 
     // Get all menus in last 7 days with their ratings
     const menus = await prisma.menu.findMany({
