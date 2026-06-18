@@ -542,6 +542,7 @@ export default function AdminMenusPage() {
         date: dateFilter || undefined,
         search: search || undefined,
       });
+      console.log('Menus fetched:', res.data.map(m => m.date));
       setMenus(res.data);
       setTotalPages(res.pagination.totalPages);
     } catch {

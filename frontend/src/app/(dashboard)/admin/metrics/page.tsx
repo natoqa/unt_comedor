@@ -39,6 +39,7 @@ export default function MetricsAndRatingsPage() {
           ratingService.getMenuExtremes(7),
           ratingService.getShiftExtremes(7),
         ]);
+        console.log("=== shiftExtremesData ===", JSON.stringify(shiftExtremesData, null, 2));
         setGlobalStats(global);
         setShiftStats(shifts);
         setTrends(trendData);
