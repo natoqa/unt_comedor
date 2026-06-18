@@ -151,23 +151,22 @@ export class RatingRepository {
     startDate.setDate(startDate.getDate() - daysBack);
     startDate.setHours(0, 0, 0, 0);
 
-    const ratings = await prisma.rating.findMany({
+    const menus = await prisma.menu.findMany({
       where: {
-        menu: {
-          date: { gte: startDate }
-        }
+        date: { gte: startDate }
       },
-      select: {
-        taste: true,
-        quantity: true,
-        variety: true,
-        hygiene: true,
-        service: true,
-        menu: {
-          select: { date: true, shift: true },
+      include: {
+        ratings: {
+          select: {
+            taste: true,
+            quantity: true,
+            variety: true,
+            hygiene: true,
+            service: true,
+          },
         },
       },
-      orderBy: { menu: { date: 'asc' } },
+      orderBy: { date: 'asc' },
     });
 
     // Agrupar por fecha
@@ -179,19 +178,21 @@ export class RatingRepository {
       service: number[];
     }>();
 
-    for (const r of ratings) {
-      const dateKey = r.menu.date.toISOString().split('T')[0];
-      if (!grouped.has(dateKey)) {
-        grouped.set(dateKey, {
-          taste: [], quantity: [], variety: [], hygiene: [], service: [],
-        });
+    for (const menu of menus) {
+      for (const r of menu.ratings) {
+        const dateKey = menu.date.toISOString().split('T')[0];
+        if (!grouped.has(dateKey)) {
+          grouped.set(dateKey, {
+            taste: [], quantity: [], variety: [], hygiene: [], service: [],
+          });
+        }
+        const g = grouped.get(dateKey)!;
+        g.taste.push(r.taste);
+        g.quantity.push(r.quantity);
+        g.variety.push(r.variety);
+        g.hygiene.push(r.hygiene);
+        g.service.push(r.service);
       }
-      const g = grouped.get(dateKey)!;
-      g.taste.push(r.taste);
-      g.quantity.push(r.quantity);
-      g.variety.push(r.variety);
-      g.hygiene.push(r.hygiene);
-      g.service.push(r.service);
     }
 
     const trends = Array.from(grouped.entries()).map(([date, vals]) => {
@@ -261,61 +262,48 @@ export class RatingRepository {
     startDate.setDate(startDate.getDate() - days);
     startDate.setHours(0, 0, 0, 0);
 
-    const ratings = await prisma.rating.findMany({
+    // First, get all menus in the last 7 days with their ratings
+    const menus = await prisma.menu.findMany({
       where: {
-        menu: {
-          date: { gte: startDate }
-        }
+        date: { gte: startDate },
       },
-      select: {
-        taste: true,
-        quantity: true,
-        variety: true,
-        hygiene: true,
-        service: true,
-        menu: {
+      include: {
+        ratings: {
           select: {
-            date: true,
-            shift: true,
+            taste: true,
+            quantity: true,
+            variety: true,
+            hygiene: true,
+            service: true,
           },
         },
       },
     });
 
-    const dayStats = new Map<string, Map<string, { total: number; count: number }>>();
+    const dayStats = new Map<string, number[]>(); // date -> array of averages (1 per shift)
 
-    for (const r of ratings) {
-      const avg = (r.taste + r.quantity + r.variety + r.hygiene + r.service) / 5;
-      const dateKey = r.menu.date.toISOString().split('T')[0];
-      const shift = r.menu.shift;
+    for (const menu of menus) {
+      if (menu.ratings.length === 0) continue;
+      
+      const total = menu.ratings.reduce((sum, r) => {
+        return sum + (r.taste + r.quantity + r.variety + r.hygiene + r.service) / 5;
+      }, 0);
+      const avg = total / menu.ratings.length;
 
+      const dateKey = menu.date.toISOString().split('T')[0];
       if (!dayStats.has(dateKey)) {
-        dayStats.set(dateKey, new Map());
+        dayStats.set(dateKey, []);
       }
-      const shiftMap = dayStats.get(dateKey)!;
-
-      if (!shiftMap.has(shift)) {
-        shiftMap.set(shift, { total: 0, count: 0 });
-      }
-      const stat = shiftMap.get(shift)!;
-      stat.total += avg;
-      stat.count += 1;
+      dayStats.get(dateKey)!.push(avg);
     }
 
     let bestDay = null;
     let worstDay = null;
     let maxAvg = -1;
-    let minAvg = 20;
+    let minAvg = 6;
 
-    for (const [date, shiftMap] of dayStats.entries()) {
-      let dayTotal = 0;
-      let numShifts = 0;
-      for (const stat of shiftMap.values()) {
-        dayTotal += stat.total / stat.count;
-        numShifts += 1;
-      }
-      
-      const dayAvg = numShifts > 0 ? dayTotal / numShifts : 0;
+    for (const [date, avgs] of dayStats.entries()) {
+      const dayAvg = avgs.reduce((a, b) => a + b, 0) / avgs.length;
 
       if (dayAvg > maxAvg) {
         maxAvg = dayAvg;
@@ -336,40 +324,23 @@ export class RatingRepository {
     startDate.setDate(startDate.getDate() - days);
     startDate.setHours(0, 0, 0, 0);
 
-    const ratings = await prisma.rating.findMany({
+    // Get all menus in last 7 days with their ratings
+    const menus = await prisma.menu.findMany({
       where: {
-        menu: {
-          date: { gte: startDate }
-        }
+        date: { gte: startDate },
       },
-      select: {
-        taste: true,
-        quantity: true,
-        variety: true,
-        hygiene: true,
-        service: true,
-        menu: {
+      include: {
+        ratings: {
           select: {
-            id: true,
-            date: true,
-            shift: true,
+            taste: true,
+            quantity: true,
+            variety: true,
+            hygiene: true,
+            service: true,
           },
         },
       },
     });
-
-    const shiftStats = new Map<string, { total: number; count: number; date: Date; shift: string }>();
-
-    for (const r of ratings) {
-      const avg = (r.taste + r.quantity + r.variety + r.hygiene + r.service) / 5;
-      const key = r.menu.id;
-      if (!shiftStats.has(key)) {
-        shiftStats.set(key, { total: 0, count: 0, date: r.menu.date, shift: r.menu.shift });
-      }
-      const stat = shiftStats.get(key)!;
-      stat.total += avg;
-      stat.count += 1;
-    }
 
     const extremes = {
       BREAKFAST: { best: null as any, worst: null as any, max: -1, min: 6 },
@@ -377,17 +348,33 @@ export class RatingRepository {
       DINNER: { best: null as any, worst: null as any, max: -1, min: 6 },
     };
 
-    for (const [id, stat] of shiftStats.entries()) {
-      const avg = stat.total / stat.count;
-      const shiftEx = extremes[stat.shift as keyof typeof extremes];
+    for (const menu of menus) {
+      if (menu.ratings.length === 0) continue;
+
+      const total = menu.ratings.reduce((sum, r) => {
+        return sum + (r.taste + r.quantity + r.variety + r.hygiene + r.service) / 5;
+      }, 0);
+      const avg = total / menu.ratings.length;
+
+      const shiftEx = extremes[menu.shift];
       
       if (avg > shiftEx.max) {
         shiftEx.max = avg;
-        shiftEx.best = { id, date: stat.date, shift: stat.shift, average: Math.round(avg * 100) / 100 };
+        shiftEx.best = { 
+          id: menu.id, 
+          date: menu.date, 
+          shift: menu.shift, 
+          average: Math.round(avg * 100) / 100 
+        };
       }
       if (avg < shiftEx.min) {
         shiftEx.min = avg;
-        shiftEx.worst = { id, date: stat.date, shift: stat.shift, average: Math.round(avg * 100) / 100 };
+        shiftEx.worst = { 
+          id: menu.id, 
+          date: menu.date, 
+          shift: menu.shift, 
+          average: Math.round(avg * 100) / 100 
+        };
       }
     }
 
