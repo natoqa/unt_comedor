@@ -153,7 +153,9 @@ export class RatingRepository {
 
     const ratings = await prisma.rating.findMany({
       where: {
-        createdAt: { gte: startDate },
+        menu: {
+          date: { gte: startDate }
+        }
       },
       select: {
         taste: true,
@@ -161,12 +163,11 @@ export class RatingRepository {
         variety: true,
         hygiene: true,
         service: true,
-        createdAt: true,
         menu: {
           select: { date: true, shift: true },
         },
       },
-      orderBy: { createdAt: 'asc' },
+      orderBy: { menu: { date: 'asc' } },
     });
 
     // Agrupar por fecha
@@ -262,7 +263,9 @@ export class RatingRepository {
 
     const ratings = await prisma.rating.findMany({
       where: {
-        createdAt: { gte: startDate },
+        menu: {
+          date: { gte: startDate }
+        }
       },
       select: {
         taste: true,
@@ -306,17 +309,21 @@ export class RatingRepository {
 
     for (const [date, shiftMap] of dayStats.entries()) {
       let dayTotal = 0;
+      let numShifts = 0;
       for (const stat of shiftMap.values()) {
         dayTotal += stat.total / stat.count;
+        numShifts += 1;
       }
+      
+      const dayAvg = numShifts > 0 ? dayTotal / numShifts : 0;
 
-      if (dayTotal > maxAvg) {
-        maxAvg = dayTotal;
-        bestDay = { date, average: Math.round(dayTotal * 100) / 100 };
+      if (dayAvg > maxAvg) {
+        maxAvg = dayAvg;
+        bestDay = { date, average: Math.round(dayAvg * 100) / 100 };
       }
-      if (dayTotal < minAvg) {
-        minAvg = dayTotal;
-        worstDay = { date, average: Math.round(dayTotal * 100) / 100 };
+      if (dayAvg < minAvg) {
+        minAvg = dayAvg;
+        worstDay = { date, average: Math.round(dayAvg * 100) / 100 };
       }
     }
 
@@ -331,7 +338,9 @@ export class RatingRepository {
 
     const ratings = await prisma.rating.findMany({
       where: {
-        createdAt: { gte: startDate },
+        menu: {
+          date: { gte: startDate }
+        }
       },
       select: {
         taste: true,
