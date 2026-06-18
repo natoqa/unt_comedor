@@ -31,6 +31,11 @@ export interface DashboardStats {
   activeStudents: number;
   totalMenus: number;
   ratingsToday: number;
+  ratingsByShift: {
+    BREAKFAST: number;
+    LUNCH: number;
+    DINNER: number;
+  };
   positiveRatingsPercentage: number;
   complaints: number;
 }

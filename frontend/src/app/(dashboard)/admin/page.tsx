@@ -5,13 +5,12 @@ import { useState, useEffect } from 'react';
 import {
   Utensils,
   Users,
-  Search,
   BarChart3,
   ShieldCheck,
   TrendingUp,
   AlertCircle
 } from 'lucide-react';
-import { userService, DashboardStats } from '@/services/user.service';
+import { userService, DashboardStats } from '@/services';
 import { toast } from 'sonner';
 
 export default function AdminDashboardPage() {
@@ -98,12 +97,12 @@ export default function AdminDashboardPage() {
             </div>
             <span className="text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white text-center">Gestionar Usuarios</span>
           </Link>
-          <button className="bg-white dark:bg-slate-800 rounded-xl p-4 sm:p-6 border border-slate-100 dark:border-slate-700 shadow-sm hover:border-indigo-100 dark:hover:border-indigo-500 hover:shadow-md transition-all flex flex-col items-center justify-center gap-2 sm:gap-3 group">
+          <Link href="/admin/metrics" className="bg-white dark:bg-slate-800 rounded-xl p-4 sm:p-6 border border-slate-100 dark:border-slate-700 shadow-sm hover:border-indigo-100 dark:hover:border-indigo-500 hover:shadow-md transition-all flex flex-col items-center justify-center gap-2 sm:gap-3 group">
             <div className="text-slate-400 dark:text-slate-500 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
               <BarChart3 size={22} strokeWidth={1.5} />
             </div>
             <span className="text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white text-center">Ver Métricas</span>
-          </button>
+          </Link>
         </div>
       </div>
 
@@ -125,9 +124,22 @@ export default function AdminDashboardPage() {
               <span className="text-sm text-slate-600 dark:text-slate-400 font-medium">Menús Registrados</span>
               <span className="text-sm font-bold text-indigo-600 dark:text-indigo-400">{stats?.totalMenus ?? '...'}</span>
             </div>
-            <div className="flex items-center justify-between py-2 border-b border-slate-50 dark:border-slate-700/50 last:border-0">
+            <div className="space-y-3">
               <span className="text-sm text-slate-600 dark:text-slate-400 font-medium">Valoraciones Hoy</span>
-              <span className="text-sm font-bold text-indigo-600 dark:text-indigo-400">{stats?.ratingsToday ?? '...'}</span>
+              <div className="grid grid-cols-3 gap-2">
+                <div className="bg-orange-50 dark:bg-orange-900/20 p-3 rounded-lg text-center border border-orange-100 dark:border-orange-500/20">
+                  <span className="text-xs text-slate-500 dark:text-slate-400 uppercase">Desayuno</span>
+                  <p className="text-lg font-bold text-orange-700 dark:text-orange-400">{stats?.ratingsByShift?.BREAKFAST ?? 0}</p>
+                </div>
+                <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg text-center border border-blue-100 dark:border-blue-500/20">
+                  <span className="text-xs text-slate-500 dark:text-slate-400 uppercase">Almuerzo</span>
+                  <p className="text-lg font-bold text-blue-700 dark:text-blue-400">{stats?.ratingsByShift?.LUNCH ?? 0}</p>
+                </div>
+                <div className="bg-purple-50 dark:bg-purple-900/20 p-3 rounded-lg text-center border border-purple-100 dark:border-purple-500/20">
+                  <span className="text-xs text-slate-500 dark:text-slate-400 uppercase">Cena</span>
+                  <p className="text-lg font-bold text-purple-700 dark:text-purple-400">{stats?.ratingsByShift?.DINNER ?? 0}</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>

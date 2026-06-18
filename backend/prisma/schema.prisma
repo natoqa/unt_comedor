@@ -167,3 +167,20 @@ model TicketResponse {
 
   @@map("ticket_responses")
 }
+
+model Settings {
+  id                    String   @id @default(uuid())
+  institutionName       String   @default("Universidad Nacional de Trujillo") @map("institution_name")
+  systemName            String   @default("UNT Comedor") @map("system_name")
+  breakfastStart        String   @default("07:00") @map("breakfast_start")
+  breakfastEnd          String   @default("09:00") @map("breakfast_end")
+  lunchStart            String   @default("12:00") @map("lunch_start")
+  lunchEnd              String   @default("14:00") @map("lunch_end")
+  dinnerStart           String   @default("19:00") @map("dinner_start")
+  dinnerEnd             String   @default("21:00") @map("dinner_end")
+  diningCapacity        Int      @default(200) @map("dining_capacity")
+  createdAt             DateTime @default(now()) @map("created_at")
+  updatedAt             DateTime @updatedAt @map("updated_at")
+
+  @@map("settings")
+}

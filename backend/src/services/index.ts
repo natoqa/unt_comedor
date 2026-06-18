@@ -3,3 +3,4 @@ export { MenuService } from './menu.service';
 export { RatingService } from './rating.service';
 export { UserService } from './user.service';
 export { TicketService } from './ticket.service';
+export { SettingsService } from './settings.service';

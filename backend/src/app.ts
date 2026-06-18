@@ -11,6 +11,7 @@ import menuRoutes from './routes/menu.routes';
 import ratingRoutes from './routes/rating.routes';
 import userRoutes from './routes/user.routes';
 import ticketRoutes from './routes/ticket.routes';
+import settingsRoutes from './routes/settings.routes';
 
 const app = express();
 
@@ -53,6 +54,7 @@ app.use('/api/menus', menuRoutes);
 app.use('/api/ratings', ratingRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/tickets', ticketRoutes);
+app.use('/api/settings', settingsRoutes);
 
 // ── Manejo de errores ──
 app.use(errorHandler);

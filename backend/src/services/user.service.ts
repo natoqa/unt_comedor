@@ -1,6 +1,6 @@
 import { prisma } from '../config';
 import { UserRepository } from '../repositories';
-import { Role } from '@prisma/client';
+import { Role, MealShift } from '@prisma/client';
 import { startOfDay, endOfDay } from 'date-fns';
 import bcrypt from 'bcryptjs';
 
@@ -115,7 +115,7 @@ export class UserService {
     const startOfToday = startOfDay(now);
     const endOfToday = endOfDay(now);
 
-    const [activeStudents, groupedMenus, ratingsToday, allRatings] = await Promise.all([
+    const [activeStudents, groupedMenus, ratingsToday, allRatingsToday, allRatings] = await Promise.all([
       prisma.user.count({
         where: { role: 'STUDENT', isActive: true },
       }),
@@ -131,6 +131,21 @@ export class UserService {
         },
       }),
       prisma.rating.findMany({
+        where: {
+          createdAt: {
+            gte: startOfToday,
+            lte: endOfToday,
+          },
+        },
+        include: {
+          menu: {
+            select: {
+              shift: true,
+            },
+          },
+        },
+      }),
+      prisma.rating.findMany({
         select: {
           taste: true,
           quantity: true,
@@ -141,6 +156,19 @@ export class UserService {
         },
       }),
     ]);
+
+    // Calculate ratings by shift
+    const ratingsByShift: Record<MealShift, number> = {
+      [MealShift.BREAKFAST]: 0,
+      [MealShift.LUNCH]: 0,
+      [MealShift.DINNER]: 0,
+    };
+
+    for (const rating of allRatingsToday) {
+      if (rating.menu?.shift) {
+        ratingsByShift[rating.menu.shift]++;
+      }
+    }
 
     let positiveRatingsCount = 0;
     let complaintsCount = 0;
@@ -165,6 +193,7 @@ export class UserService {
       activeStudents,
       totalMenus,
       ratingsToday,
+      ratingsByShift,
       positiveRatingsPercentage,
       complaints: complaintsCount,
     };
