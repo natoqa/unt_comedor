@@ -6,7 +6,6 @@ import {
   Utensils,
   Users,
   BarChart3,
-  ShieldCheck,
   TrendingUp,
   AlertCircle
 } from 'lucide-react';
@@ -49,7 +48,7 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* Metrics Grid */}
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {/* Card 1 */}
         <div className="bg-white dark:bg-slate-800 rounded-xl p-5 border border-slate-100 dark:border-slate-700 shadow-sm relative overflow-hidden transition-colors">
           {loading && <div className="absolute inset-0 bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm z-10 flex items-center justify-center"><div className="w-5 h-5 border-2 border-indigo-600 dark:border-indigo-400 border-t-transparent rounded-full animate-spin" /></div>}
@@ -106,45 +105,9 @@ export default function AdminDashboardPage() {
         </div>
       </div>
 
-      {/* Bottom Split Sections */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 relative">
+      {/* Bottom Section: Only Salud del Sistema */}
+      <div className="relative">
         {loading && <div className="absolute inset-0 bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm z-10 flex items-center justify-center rounded-xl"><div className="w-5 h-5 border-2 border-indigo-600 dark:border-indigo-400 border-t-transparent rounded-full animate-spin" /></div>}
-        {/* Left Section */}
-        <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-100 dark:border-slate-700 shadow-sm transition-colors">
-          <div className="flex items-center gap-2 mb-6">
-            <ShieldCheck size={20} className="text-indigo-600 dark:text-indigo-400" />
-            <h2 className="text-base font-bold text-slate-900 dark:text-white">Estado del Comedor</h2>
-          </div>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between py-2 border-b border-slate-50 dark:border-slate-700/50 last:border-0">
-              <span className="text-sm text-slate-600 dark:text-slate-400 font-medium">Estudiantes Activos</span>
-              <span className="text-sm font-bold text-indigo-600 dark:text-indigo-400">{stats?.activeStudents ?? '...'}</span>
-            </div>
-            <div className="flex items-center justify-between py-2 border-b border-slate-50 dark:border-slate-700/50 last:border-0">
-              <span className="text-sm text-slate-600 dark:text-slate-400 font-medium">Menús Registrados</span>
-              <span className="text-sm font-bold text-indigo-600 dark:text-indigo-400">{stats?.totalMenus ?? '...'}</span>
-            </div>
-            <div className="space-y-3">
-              <span className="text-sm text-slate-600 dark:text-slate-400 font-medium">Valoraciones Hoy</span>
-              <div className="grid grid-cols-3 gap-2">
-                <div className="bg-orange-50 dark:bg-orange-900/20 p-3 rounded-lg text-center border border-orange-100 dark:border-orange-500/20">
-                  <span className="text-xs text-slate-500 dark:text-slate-400 uppercase">Desayuno</span>
-                  <p className="text-lg font-bold text-orange-700 dark:text-orange-400">{stats?.ratingsByShift?.BREAKFAST ?? 0}</p>
-                </div>
-                <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg text-center border border-blue-100 dark:border-blue-500/20">
-                  <span className="text-xs text-slate-500 dark:text-slate-400 uppercase">Almuerzo</span>
-                  <p className="text-lg font-bold text-blue-700 dark:text-blue-400">{stats?.ratingsByShift?.LUNCH ?? 0}</p>
-                </div>
-                <div className="bg-purple-50 dark:bg-purple-900/20 p-3 rounded-lg text-center border border-purple-100 dark:border-purple-500/20">
-                  <span className="text-xs text-slate-500 dark:text-slate-400 uppercase">Cena</span>
-                  <p className="text-lg font-bold text-purple-700 dark:text-purple-400">{stats?.ratingsByShift?.DINNER ?? 0}</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Right Section */}
         <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-100 dark:border-slate-700 shadow-sm transition-colors">
           <div className="flex items-center gap-2 mb-6">
             <TrendingUp size={20} className="text-indigo-600 dark:text-indigo-400" />

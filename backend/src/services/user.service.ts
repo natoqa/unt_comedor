@@ -2,6 +2,7 @@ import { prisma } from '../config';
 import { UserRepository } from '../repositories';
 import { Role, MealShift } from '@prisma/client';
 import { startOfDay, endOfDay } from 'date-fns';
+import { fromZonedTime, toZonedTime } from 'date-fns-tz';
 import bcrypt from 'bcryptjs';
 
 const userRepository = new UserRepository();
@@ -111,9 +112,13 @@ export class UserService {
   }
 
   async getDashboardStats() {
+    const timeZone = 'America/Lima';
     const now = new Date();
-    const startOfToday = startOfDay(now);
-    const endOfToday = endOfDay(now);
+    const zonedNow = toZonedTime(now, timeZone);
+    const zonedStartOfToday = startOfDay(zonedNow);
+    const zonedEndOfToday = endOfDay(zonedNow);
+    const startOfToday = fromZonedTime(zonedStartOfToday, timeZone);
+    const endOfToday = fromZonedTime(zonedEndOfToday, timeZone);
 
     const [activeStudents, groupedMenus, ratingsToday, allRatingsToday, allRatings] = await Promise.all([
       prisma.user.count({
