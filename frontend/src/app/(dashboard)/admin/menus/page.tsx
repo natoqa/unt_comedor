@@ -10,7 +10,7 @@ import type { Menu, MealShift } from '@/types';
 import { SHIFT_LABELS } from '@/types';
 import { formatMenuDateShort } from '@/lib/date';
 import { resolveMenuImageUrl, resolveMenuImageUrlWithCache } from '@/lib/imageUrl';
-import { Pencil, Trash2, Calendar as CalendarIcon, Utensils, Star, Flame, Search, Filter } from 'lucide-react';
+import { Pencil, Trash2, Calendar as CalendarIcon, Utensils, Users, Flame, Search, Filter } from 'lucide-react';
 
 const MEAL_SHIFTS: MealShift[] = ['BREAKFAST', 'LUNCH', 'DINNER'];
 
@@ -670,11 +670,18 @@ export default function AdminMenusPage() {
                         )}
                       </td>
                       <td className="px-6 py-4 hidden sm:table-cell text-center whitespace-nowrap">
-                        <div className="inline-flex items-center justify-center gap-1" title="Valoraciones totales del día">
-                          <Star className={`w-4 h-4 ${totalRatings > 0 ? 'fill-amber-400 text-amber-400' : 'text-slate-300 dark:text-slate-600'}`} />
-                          <span className="font-semibold text-slate-700 dark:text-slate-300">
-                            {totalRatings}
-                          </span>
+                        <div className="flex flex-col gap-1 items-end justify-center">
+                          {group.menus.map(m => {
+                            const ratingCount = (m as any)._count?.ratings ?? 0;
+                            return (
+                              <div key={m.id} className="inline-flex items-center justify-center gap-1" title={`Valoraciones para ${SHIFT_LABELS[m.shift]}`}>
+                                <Users className={`w-3.5 h-3.5 ${ratingCount > 0 ? 'text-indigo-500' : 'text-slate-300 dark:text-slate-600'}`} />
+                                <span className="font-semibold text-slate-700 dark:text-slate-300 text-xs">
+                                  {ratingCount}
+                                </span>
+                              </div>
+                            );
+                          })}
                         </div>
                       </td>
                       <td className="px-6 py-4 text-right whitespace-nowrap">
