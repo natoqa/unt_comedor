@@ -124,9 +124,9 @@ export default function SettingsPage() {
                   <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Horarios por Defecto</label>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     {[
-                      { label: 'Desayuno', start: 'breakfastStart', end: 'breakfastEnd' },
-                      { label: 'Almuerzo', start: 'lunchStart', end: 'lunchEnd' },
-                      { label: 'Cena', start: 'dinnerStart', end: 'dinnerEnd' },
+                      { label: 'Desayuno', start: 'breakfastStart' as const, end: 'breakfastEnd' as const },
+                      { label: 'Almuerzo', start: 'lunchStart' as const, end: 'lunchEnd' as const },
+                      { label: 'Cena', start: 'dinnerStart' as const, end: 'dinnerEnd' as const },
                     ].map((shift) => (
                       <div key={shift.label} className="p-4 rounded-lg border border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50">
                         <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block mb-3">{shift.label}</span>
