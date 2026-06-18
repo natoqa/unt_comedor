@@ -240,8 +240,8 @@ export default function MetricsAndRatingsPage() {
                     <h3 className="text-sm font-bold text-slate-700 dark:text-slate-300">{title}</h3>
                     <Icon className={`w-5 h-5 text-${colorClass}-500`} />
                   </div>
-                  <p className="font-semibold text-slate-900 dark:text-white text-base mb-1">
-                    {format(new Date(shiftData.date), "EEEE, d 'de' MMMM", { locale: es })}
+                  <p className="font-semibold text-slate-900 dark:text-white text-base mb-1 capitalize">
+                    {formatMenuDate(shiftData.date)}
                   </p>
                   <div className={`mt-3 inline-flex items-center gap-1.5 bg-${colorClass}-50 dark:bg-slate-900 text-${colorClass}-700 dark:text-${colorClass}-400 px-2.5 py-1 rounded-md font-bold text-sm border border-${colorClass}-100 dark:border-${colorClass}-800`}>
                     <Star className={`w-3.5 h-3.5 fill-${colorClass}-500 text-${colorClass}-500`} />
